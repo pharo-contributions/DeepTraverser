@@ -4,9 +4,9 @@ The traverser has three responsibilities:
 2. mark traversed objects,
 3. trigger actions for each traversed object and each relation between two traversed objects
 
-1. is handled via  the MalTraversal hierarchy
+1. is handled via  the DeepTraversal hierarchy
 2. is the responsibility of the traverse itself
-3. is handled by the MalActionStrategy hierarchy
+3. is handled by the DeepActionStrategy hierarchy
 "
 Class {
 	#name : #DeepTraverser,

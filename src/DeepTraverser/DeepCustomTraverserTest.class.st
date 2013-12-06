@@ -1,5 +1,5 @@
 "
-A MalCustomGraphTraverserTest is a test class for testing the behavior of MalCustomGraphTraverser
+This is a test class for testing the behavior of DeepTraverser
 "
 Class {
 	#name : #DeepCustomTraverserTest,
