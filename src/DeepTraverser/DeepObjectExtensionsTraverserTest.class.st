@@ -1,0 +1,77 @@
+"
+Tests the Object extensions related to the traverser
+"
+Class {
+	#name : #DeepObjectExtensionsTraverserTest,
+	#superclass : #DeepTraverserTest,
+	#category : #DeepTraverser
+}
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepCollectAs [
+	| result |
+	result := 1 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		collect: [ :each | each * 10 ]
+		as: Set.
+	self assert: result equals: #(20 30) asSet
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepCollectAsSet [
+	| result |
+	result := 1 deepCollectAsSet: [ :each | self nextGraphElementsFrom: each ].
+	self assert: result equals: #(2 3) asSet
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepCollectSimple [
+	| result |
+	result := 1 deepCollect: [ :each | self nextGraphElementsFrom: each ].
+	self assert: result equals: #(2 3) asOrderedCollection
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepCollectWithBlock [
+	| result |
+	result := 1 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		collect: [ :each | each * 10 ].
+	self assert: result equals: #(20 30) asOrderedCollection
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepDo [
+	| trace |
+	trace := OrderedCollection new.
+	1 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		do: [ :each | trace add: each ].
+	self assert: trace equals: #(2 3) asOrderedCollection
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepFlatCollectWithBlock [
+	| result |
+	result := 1 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		flatCollect: [ :each | 1 to: each ].
+	self assert: result equals: #(1 2 1 2 3) asOrderedCollection
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testWithDeepCollect [
+	| result |
+	result := 1 withDeepCollect: [ :each | self nextGraphElementsFrom: each ].
+	self assert: result asSet equals: #(1 2 3) asSet
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testWithDeepDo [
+	| trace |
+	trace := Set new.
+	1 
+		withDeep: [ :each | self nextGraphElementsFrom: each ] 
+		do: [ :each | trace add: each ].
+	self assert: trace equals: #(1 2 3) asSet
+]
