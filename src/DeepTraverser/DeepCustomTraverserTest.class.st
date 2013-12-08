@@ -33,6 +33,19 @@ DeepCustomTraverserTest >> testCycles [
 ]
 
 { #category : #tests }
+DeepCustomTraverserTest >> testFirstObjectAction [
+	| objects action |
+	objects := OrderedCollection new.
+	action := DeepCustomActionStrategy new 
+					objectAction: [ :each | objects add: each ].
+	traverser action: action.
+	traverser firstObjectAction: action.
+	traverser traverse: 0.
+	self assert: objects size equals: 4.
+	self assert: objects equals: { 0. 1 . 2 . 3 } asOrderedCollection
+]
+
+{ #category : #tests }
 DeepCustomTraverserTest >> testNoCycle [
 	traverser traverse: 4.
 	self 
@@ -41,9 +54,33 @@ DeepCustomTraverserTest >> testNoCycle [
 ]
 
 { #category : #tests }
+DeepCustomTraverserTest >> testObjectAction [
+	| objects action |
+	objects := OrderedCollection new.
+	action := DeepCustomActionStrategy new 
+					objectAction: [ :each | objects add: each ].
+	traverser action: action.
+	traverser traverse: 0.
+	self assert: objects size equals: 3.
+	self assert: objects equals: { 1 . 2 . 3 } asOrderedCollection
+]
+
+{ #category : #tests }
 DeepCustomTraverserTest >> testOriginIsPresentInResult [
 	traverser traverse: 0.
 	self 
 		assert: traverser traversedObjects 
 		equals: {0 . 1 . 2 . 3} asSet
+]
+
+{ #category : #tests }
+DeepCustomTraverserTest >> testRelationAction [
+	| relations action |
+	relations := OrderedCollection new.
+	action := DeepCustomActionStrategy new 
+					relationAction: [:from :to | relations add: from->to ].
+	traverser action: action.
+	traverser traverse: 0.
+	self assert: relations size equals: 4.
+	self assert: relations equals: { 0->1 . 1->2 . 1->3 . 2->3 } asOrderedCollection
 ]

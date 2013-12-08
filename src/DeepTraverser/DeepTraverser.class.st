@@ -74,8 +74,8 @@ DeepTraverser >> doTraverse: anObject [
 				do: [ :each | 
 					( self shouldTraverse: each ) ifTrue: [ 
 								toTraverse add: each.
-								self actOnObject: each.
-								self actOnRelationFrom: currentObject to: each ] ] ] 
+								self actOnObject: each ].
+					self actOnRelationFrom: currentObject to: each ] ] 
 ]
 
 { #category : #accessing }

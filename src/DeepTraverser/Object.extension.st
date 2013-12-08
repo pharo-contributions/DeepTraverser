@@ -29,6 +29,18 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 ]
 
 { #category : #'*DeepTraverser' }
+Object >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	| traverser action |
+	action := DeepCustomActionStrategy new 
+					objectAction: anObjectActionBlock;
+					relationAction: aRelationBlock.
+	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
+	traverser 
+		action: action;
+		traverse: self
+]
+
+{ #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock flatCollect: aCollectBlock [
 	^ self 
 		deep: aTraversalBlock 
