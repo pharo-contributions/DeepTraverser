@@ -88,6 +88,19 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
 ]
 
 { #category : #'*DeepTraverser' }
+Object >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	| traverser action |
+	action := DeepCustomActionStrategy new 
+					objectAction: anObjectActionBlock;
+					relationAction: aRelationBlock.
+	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
+	traverser 
+		action: action;
+		firstObjectAction: action;
+		traverse: self
+]
+
+{ #category : #'*DeepTraverser' }
 Object >> withDeepCollect: aBlock [
 	| result |
 	result := OrderedCollection new.
