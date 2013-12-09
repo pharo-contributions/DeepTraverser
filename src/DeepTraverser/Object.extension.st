@@ -2,6 +2,14 @@ Extension { #name : #Object }
 
 { #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock collect: aCollectBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers aCollectBlock and adds it to the returned OrderedCollection.
+	
+	For example:
+	Number
+		deep: #subclasses 
+		collect: #name"
+
 	^ self 
 		deep: aTraversalBlock 
 		collect: aCollectBlock 
@@ -10,6 +18,16 @@ Object >> deep: aTraversalBlock collect: aCollectBlock [
 
 { #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock collect: aCollectBlock as: aCollectionClass [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers aCollectBlock and adds it to the returned collection
+	that is of type aCollectionClass.
+	
+	For example:
+	Number
+		deep: #subclasses 
+		collect: #name
+		as: Set"
+
 	| result |
 	result := aCollectionClass new.
 	self 
@@ -20,6 +38,14 @@ Object >> deep: aTraversalBlock collect: aCollectBlock as: aCollectionClass [
 
 { #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock do: anObjectActionBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers anObjectActionBlock.
+	
+	For example:
+	Number
+		deep: #subclasses 
+		do: [:each | Transcript show: each; cr]"
+	
 	| traverser action |
 	action := DeepCustomActionStrategy new objectAction: anObjectActionBlock.
 	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
@@ -30,6 +56,16 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 
 { #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers anObjectActionBlock, and
+	for each relation between two traversed objects triggers aRelationBlock.
+	
+	For example:
+	Number 
+		deep: #subclasses 
+		do: [:each | Transcript show: each; cr]
+		relationDo: [ :from :to | Transcript show: from; show: ' <-- '; show: to; cr ]"
+
 	| traverser action |
 	action := DeepCustomActionStrategy new 
 					objectAction: anObjectActionBlock;
@@ -42,6 +78,15 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlo
 
 { #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock flatCollect: aCollectBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers aCollectBlock and adds the objects from the collection
+	to the returned OrderedCollection.
+	
+	For example:
+	Number
+		deep: #subclasses 
+		flatCollect: #selectors"
+		
 	^ self 
 		deep: aTraversalBlock 
 		flatCollect: aCollectBlock 
@@ -50,6 +95,16 @@ Object >> deep: aTraversalBlock flatCollect: aCollectBlock [
 
 { #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock flatCollect: aCollectBlock as: aCollectionClass [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers aCollectBlock and adds the objects from the collection
+	to the returned instance of aCollectionClass.
+	
+	For example:
+	Number
+		deep: #subclasses 
+		flatCollect: #selectors
+		as: Set"
+	
 	| result |
 	result := aCollectionClass new.
 	self 
@@ -59,17 +114,30 @@ Object >> deep: aTraversalBlock flatCollect: aCollectBlock as: aCollectionClass 
 ]
 
 { #category : #'*DeepTraverser' }
-Object >> deepCollect: aBlock [
+Object >> deepCollect: aTraversalBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	returns an OrderedCollection containing each traversed object.
+	
+	For example:
+	Number deepCollect: #subclasses"
+	
 	^ self 
-		deep: aBlock 
+		deep: aTraversalBlock 
 		collect: [ :each | each ]
 ]
 
 { #category : #'*DeepTraverser' }
 Object >> deepCollectAsSet: aBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	returns a Set containing each traversed object.
+	
+	For example:
+	Number deepCollectAsSet: #subclasses"
+
 	"When the desired result is a set, we take advantage of the 
 	fact that the traversed objects are kept in a set inside the traverser
 	and we simply return that set"
+	
 	^ ((DeepTraverser withCustomTraversal: aBlock)
 		traverse: self)
 		remove: self;
@@ -78,6 +146,14 @@ Object >> deepCollectAsSet: aBlock [
 
 { #category : #'*DeepTraverser' }
 Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
+	"traverses all objects starting with and including the receiver using aTraversalBlock, and
+	for each triggers anObjectActionBlock.
+	
+	For example:
+	Number
+		withDeep: #subclasses 
+		do: [:each | Transcript show: each]"
+
 	| traverser action |
 	action := DeepCustomActionStrategy new objectAction: anObjectActionBlock.
 	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
@@ -89,6 +165,16 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
 
 { #category : #'*DeepTraverser' }
 Object >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	"traverses all objects starting with and including the receiver using aTraversalBlock, and
+	for each triggers anObjectActionBlock, and
+	for each relation between two traversed objects triggers aRelationBlock.
+	
+	For example:
+	Number 
+		withDeep: #subclasses 
+		do: [:each | Transcript show: each]
+		relationDo: [ :from :to | Transcript show: from; show: ‘ <-- '; show: to; cr ]"
+
 	| traverser action |
 	action := DeepCustomActionStrategy new 
 					objectAction: anObjectActionBlock;
@@ -101,9 +187,15 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelatio
 ]
 
 { #category : #'*DeepTraverser' }
-Object >> withDeepCollect: aBlock [
+Object >> withDeepCollect: aTraversalBlock [
+	"traverses all objects starting with and including the receiver using aTraversalBlock, and
+	returns an OrderedCollection containing each traversed object.
+	
+	For example:
+	Number withDeepCollect: #subclasses"
+
 	| result |
 	result := OrderedCollection new.
-	self withDeep: aBlock do: [ :each | result add: each ].
+	self withDeep: aTraversalBlock do: [ :each | result add: each ].
 	^ result
 ]
