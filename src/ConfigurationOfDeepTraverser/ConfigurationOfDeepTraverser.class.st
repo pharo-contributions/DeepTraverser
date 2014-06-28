@@ -62,10 +62,11 @@ ConfigurationOfDeepTraverser >> baseline10: spec [
 ]
 
 { #category : #'symbolic versions' }
-ConfigurationOfDeepTraverser >> development: spec [ 
-	<symbolicVersion: 'development'>
-	
-	spec for: #common version: '1.0-baseline'
+ConfigurationOfDeepTraverser >> development: spec [
+	<symbolicVersion: #'development'>
+
+	spec for: #'common' version: '1.0-baseline'.
+
 ]
 
 { #category : #accessing }
@@ -78,4 +79,25 @@ ConfigurationOfDeepTraverser >> project [
 		constructor := (Smalltalk at: #MetacelloVersionConstructor) on: self.
 		project := constructor project.
 		project]
+]
+
+{ #category : #'symbolic versions' }
+ConfigurationOfDeepTraverser >> stable: spec [
+	<symbolicVersion: #'stable'>
+
+	spec for: #'common' version: '1.0'.
+
+]
+
+{ #category : #versions }
+ConfigurationOfDeepTraverser >> version10: spec [
+	<version: '1.0' imports: #('1.0-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 1.0'.
+		spec author: 'StephaneDucasse'.
+		spec timestamp: '6/28/2014 19:24'.
+		spec package: 'DeepTraverser' with: 'DeepTraverser-TudorGirba.6'. ].
+
 ]
