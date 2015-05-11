@@ -1,7 +1,7 @@
 Extension { #name : #UndefinedObject }
 
 { #category : #'*DeepTraverser' }
-UndefinedObject >> withIterator: anIterator perform: anObject [
+UndefinedObject >> withIterator: anIterator action: anObject [
 	" do nothing "
 ]
 

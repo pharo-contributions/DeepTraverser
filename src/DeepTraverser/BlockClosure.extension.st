@@ -1,7 +1,7 @@
 Extension { #name : #BlockClosure }
 
 { #category : #'*DeepTraverser' }
-BlockClosure >> withIterator: anIterator perform: anObject [ 
+BlockClosure >> withIterator: anIterator action: anObject [ 
 	self value: anObject
 ]
 

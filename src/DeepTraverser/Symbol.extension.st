@@ -1,7 +1,7 @@
 Extension { #name : #Symbol }
 
 { #category : #'*DeepTraverser' }
-Symbol >> withIterator: anIterator perform: anObject [
+Symbol >> withIterator: anIterator action: anObject [
 	anObject perform: self
 ]
 

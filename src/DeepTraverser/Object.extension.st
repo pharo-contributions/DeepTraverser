@@ -49,7 +49,7 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverser new 
 		withoutStart: self;
 		traverser: aTraversalBlock;
-		performer: anObjectActionBlock;
+		action: anObjectActionBlock;
 		yourself) run
 ]
 
@@ -157,7 +157,7 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverser new 
 		withStart: self;
 		traverser: aTraversalBlock;
-		performer: anObjectActionBlock;
+		action: anObjectActionBlock;
 		yourself) run
 ]
 

@@ -31,7 +31,7 @@ DeepCustomTraverserTest >> testFirstObjectAction [
 	| objects  |
 	objects := OrderedCollection new.
 	traverser withStart: 0.
-	traverser performer: [ :each | objects add: each ].
+	traverser action: [ :each | objects add: each ].
 	traverser run.
 	self assert: objects size equals: 4.
 	self assert: objects equals: { 0 . 1 . 2 . 3 } asOrderedCollection
@@ -50,7 +50,7 @@ DeepCustomTraverserTest >> testObjectAction [
 	| objects |
 	objects := OrderedCollection new.
 	traverser withoutStart: 0.
-	traverser performer: [ :each | objects add: each ].
+	traverser action: [ :each | objects add: each ].
 	traverser run.
 	self assert: objects size equals: 3.
 	self assert: objects equals: { 1 . 2 . 3 } asOrderedCollection

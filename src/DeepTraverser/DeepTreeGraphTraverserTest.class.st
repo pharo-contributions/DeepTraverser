@@ -12,7 +12,7 @@ DeepTreeGraphTraverserTest >> assert: aResult graph: aDictionary iterator: aClas
 		iterator := aClass new 
 			withStart: start;
 			traverser: [ :e | aDictionary at: e ifAbsent: [ #() ] ];
-			performer: [ :e | result add: e ];
+			action: [ :e | result add: e ];
 			yourself.
 		iterator run ] raise: Error.
 	self assert: result asArray = aResult asArray
@@ -69,7 +69,7 @@ DeepTreeGraphTraverserTest >> testAllSubclasses [
 DeepTreeGraphTraverserTest >> testBreadthFirstGraphIterator [
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) 
 		graph: self graph 
-		iterator: DeepTraverser 
+		iterator: DeepTraverser
 		start: $a.
 	
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) = ($a
@@ -78,7 +78,7 @@ DeepTreeGraphTraverserTest >> testBreadthFirstGraphIterator [
 		
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) 
 		graph: self tree 
-		iterator: DeepTraverser 
+		iterator: DeepTraverser
 		start: $a.
 	
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) = ($a
@@ -107,14 +107,14 @@ DeepTreeGraphTraverserTest >> testStreaming [
 	iterator := DeepTraverser new 
 		withStart: $a;
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
-		performer: [ :item | performed := item ];
+		action: [ :item | performed := item ];
 		yourself.
 
 	self assert: iterator next = $a.
 	self assert: iterator next = $b.	
 		
-	self assert: (iterator nextProcessed: 4) = { $c. $d. $e. $f }.
-	self assert: (iterator nextProcessed: 4) = { $g. $h. $i. $j }.
+	self assert: (iterator next: 4) = { $c. $d. $e. $f }.
+	self assert: (iterator next: 4) = { $g. $h. $i. $j }.
 	
 	self shouldnt: [ iterator upToEnd ] raise: Error.
 	self shouldnt: [ iterator upToEnd ] raise: Error.
@@ -128,7 +128,7 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 	iterator := DeepTraverser new 
 		withStart: $a;
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
-		performer: [ :item | performed := item ];
+		action: [ :item | performed := item ];
 		yourself.
 
 	self assert: iterator next = $a.
@@ -138,18 +138,10 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 	self assert: iterator next = $e.
 	self assert: iterator next = $f.
 	self assert: iterator next = $g.
-		self assert: iterator next = $f.
-		self deny: iterator isCurrentProcessed.
 	self assert: iterator next = $h.
 	self assert: iterator next = $i.
 	self assert: iterator next = $j.
 	self assert: iterator next = $k.
-		self assert: iterator next = $f.
-		self deny: iterator isCurrentProcessed.
-		self assert: iterator next = $b.
-		self deny: iterator isCurrentProcessed.
-		self assert: iterator next = $c.
-		self deny: iterator isCurrentProcessed.
 	
 	self assert: performed = $k.
 	self should: [ iterator next ] raise: Error
@@ -161,11 +153,11 @@ DeepTreeGraphTraverserTest >> testStreamingNextProcessed [
 	iterator := DeepTraverser new 
 		withStart: $a;
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
-		performer: [ :item | performed := item ];
+		action: [ :item | performed := item ];
 		yourself.
 
 	#( $a $b $c $d $e $f $g $h $i $j $k ) do: [ :each |
-		self assert: iterator nextProcessed = each ]
+		self assert: iterator next = each ]
 ]
 
 { #category : #tests }

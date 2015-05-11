@@ -2,59 +2,50 @@ Class {
 	#name : #DeepTraverser,
 	#superclass : #Object,
 	#instVars : [
-		'current',
-		'currentProcessed',
+		'initializer',
 		'first',
-		'objectsProcessed',
-		'objectsToProcess',
-		'performer',
 		'start',
-		'traverser'
+		'previous',
+		'current',
+		'traverser',
+		'action',
+		'objectsToTraverse',
+		'objectsTraversed',
+		'objectsToTraverseAndTraversed'
 	],
 	#category : #DeepTraverser
 }
+
+{ #category : #accessing }
+DeepTraverser >> action [
+	^ action
+]
+
+{ #category : #accessing }
+DeepTraverser >> action: anObject [
+	action := anObject
+]
 
 { #category : #testing }
 DeepTraverser >> atEnd [
 	^ self hasNext not
 ]
 
-{ #category : #private }
-DeepTraverser >> basicProcess [
-	self objectsProcessed add: current.
-	self doTraverse.
-	^ self doPerform.
-]
-
-{ #category : #'accessing-defaults' }
-DeepTraverser >> defaultCollectionClass [
-	^ OrderedCollection
-]
-
-{ #category : #'accessing-defaults' }
-DeepTraverser >> defaultOrdered [
-	^ true
-]
-
-{ #category : #'public-enumerating' }
-DeepTraverser >> do: aBlock [
-	[ self atEnd ] whileFalse: [ 
-		aBlock value: self next ]
-]
-
-{ #category : #private }
-DeepTraverser >> doPerform [
-	start == current ifTrue: [ start == first ifFalse: [ ^ nil ] ].
-	self performer withIterator: self perform: current.
+{ #category : #'accessing-convenience' }
+DeepTraverser >> current [
 	^ current
 ]
 
 { #category : #'public-enumerating' }
-DeepTraverser >> doProcessed: aBlock [
-	[ self atEnd ] whileFalse: [ 
-		self next.
-		self isCurrentProcessed ifTrue: [ 
-			aBlock value: currentProcessed ] ]
+DeepTraverser >> do: aBlock [
+	[ self hasNext ] 
+		whileTrue: [ aBlock value: self next ]
+]
+
+{ #category : #private }
+DeepTraverser >> doAction [
+	start == current ifTrue: [ start == first ifFalse: [ ^ self ] ].
+	self action withIterator: self action: current.
 ]
 
 { #category : #private }
@@ -62,25 +53,17 @@ DeepTraverser >> doTraverse [
 	self traverser withIterator: self traverse: current
 ]
 
-{ #category : #accessing }
-DeepTraverser >> first [
-	^ first
-]
-
 { #category : #testing }
 DeepTraverser >> hasNext [
-	^ self objectsToProcess notEmpty
-]
-
-{ #category : #testing }
-DeepTraverser >> isCurrentProcessed [
-	^ current == currentProcessed
+	^ objectsToTraverse isEmptyOrNil not
 ]
 
 { #category : #'public-streaming' }
 DeepTraverser >> next [
-	current := self pickCurrent.
-	currentProcessed := self process.
+	current := objectsToTraverse removeFirst.
+	objectsTraversed add: current.
+	self doTraverse.
+	self doAction.
 	^ current
 ]
 
@@ -89,105 +72,54 @@ DeepTraverser >> next: anInteger [
 	| index newArray |
 	index := 0.
 	newArray := Array new: anInteger.
-	[ index < anInteger and: [ self atEnd not ] ] whileTrue: [ 
+	[ index < anInteger and: [ self hasNext ] ] whileTrue: [ 
 		newArray at: (index := index + 1) put: self next ].
 	^ newArray copyFrom: 1 to: index	
 ]
 
-{ #category : #'public-streaming' }
-DeepTraverser >> nextProcessed [
-	| continueNext |
-	continueNext := [ self atEnd not ].
-	[ continueNext value ] whileTrue: [ 
-		self next.
-		continueNext := [ self isCurrentProcessed not and: [ self atEnd not ] ] ].
-	^ currentProcessed
-]
-
-{ #category : #'public-streaming' }
-DeepTraverser >> nextProcessed: anInteger [
-	| index newArray |
-	index := 0.
-	newArray := Array new: anInteger.
-	[ index < anInteger and: [ self atEnd not ] ] whileTrue: [ 
-		newArray at: (index := index + 1) put: self nextProcessed ].
-	^ newArray copyFrom: 1 to: index
-]
-
-{ #category : #private }
-DeepTraverser >> objectsProcessed [
-	^ objectsProcessed ifNil: [ objectsProcessed := IdentitySet new ]
-]
-
-{ #category : #private }
-DeepTraverser >> objectsToProcess [
-	^ objectsToProcess ifNil: [ objectsToProcess := OrderedCollection with: self start ]
-]
-
-{ #category : #accessing }
-DeepTraverser >> performer [
-	^ performer
-]
-
-{ #category : #accessing }
-DeepTraverser >> performer: anObject [
-	performer := anObject
-]
-
-{ #category : #private }
-DeepTraverser >> pickCurrent [
-	^ self objectsToProcess removeFirst
-]
-
-{ #category : #private }
-DeepTraverser >> pickNext [
-	^ self subclassResponsibility
+{ #category : #'accessing-convenience' }
+DeepTraverser >> objectsTraversed [
+	^ objectsTraversed copy
 ]
 
 { #category : #'public-streaming' }
 DeepTraverser >> position [
-	^ self objectsProcessed size
-]
-
-{ #category : #private }
-DeepTraverser >> process [
-	(self objectsProcessed includes: current) ifTrue: [ ^ nil ].
-	^ self basicProcess
+	^ objectsTraversed size
 ]
 
 { #category : #private }
 DeepTraverser >> pushAllForIteration: anObject [
-	self objectsToProcess addAll: anObject
+	anObject do: [ :each | 
+		self pushForIteration: each ]
 ]
 
 { #category : #private }
 DeepTraverser >> pushForIteration: anObject [
-	self objectsToProcess add: anObject
+	(objectsToTraverseAndTraversed includes: anObject) ifTrue: [ ^ self ].
+	objectsToTraverse add: anObject.
+	objectsToTraverseAndTraversed add: anObject
 ]
 
 { #category : #'public-streaming' }
 DeepTraverser >> reset [
-	current := nil.
-	currentProcessed := nil.
-	objectsToProcess := nil.
-	objectsProcessed := nil.	
-
+	initializer value
 ]
 
 { #category : #'public-enumerating' }
 DeepTraverser >> run [
-	[ self atEnd ] whileFalse: [ 
-		self next ]
+	[ self hasNext ] 
+		whileTrue: [ self next ]
 ]
 
-{ #category : #accessing }
-DeepTraverser >> start [
-	^ start
+{ #category : #'accessing-compatibility' }
+DeepTraverser >> traverse: anObject [
+	self withStart: anObject.
+	self run.
 ]
 
-{ #category : #'accessing-convenience' }
+{ #category : #'accessing-compatibility' }
 DeepTraverser >> traversedObjects [
-	^ self objectsProcessed
+	^ self objectsTraversed
 ]
 
 { #category : #accessing }
@@ -204,8 +136,8 @@ DeepTraverser >> traverser: anObject [
 DeepTraverser >> upTo: anObject [
 	| newArray |
 	newArray := OrderedCollection new.
-	[ self atEnd not and: [ (self next = anObject) not ] ] whileTrue: [ 
-		 newArray add: current ].
+	[ self hasNext and: [ (self next = anObject) not ] ] whileTrue: [ 
+		newArray add: current ].
 	^ newArray
 ]
 
@@ -218,22 +150,8 @@ DeepTraverser >> upToAny: aCollection [
 DeepTraverser >> upToAnyMatching: aBlock [
 	| newArray |
 	newArray := OrderedCollection new.
-	[ self atEnd not and: [ (aBlock value: self next) not ] ] whileTrue: [ 
-		 newArray add: current ].
-	^ newArray
-]
-
-{ #category : #'public-streaming' }
-DeepTraverser >> upToAnyProcessed: aCollection [
-	^ self upToAnyProcessedMatching: [ :each | aCollection includes: each ]
-]
-
-{ #category : #'public-streaming' }
-DeepTraverser >> upToAnyProcessedMatching: aBlock [
-	| newArray |
-	newArray := OrderedCollection new.
-	[ self atEnd not and: [ (aBlock value: self nextProcessed) not and: [ self isCurrentProcessed ] ] ] whileTrue: [ 
-		 newArray add: currentProcessed ].
+	[ self hasNext and: [ (aBlock value: self next) not ] ] whileTrue: [ 
+		newArray add: current ].
 	^ newArray
 ]
 
@@ -241,46 +159,47 @@ DeepTraverser >> upToAnyProcessedMatching: aBlock [
 DeepTraverser >> upToEnd [
 	| newArray |
 	newArray := OrderedCollection new.
-	[ self atEnd ] whileFalse: [ 
+	[ self hasNext ] whileTrue: [ 
 		newArray add: self next ].
 	^ newArray
 ]
 
-{ #category : #'public-streaming' }
-DeepTraverser >> upToEndProcessed [
-	| newArray |
-	newArray := OrderedCollection new.
-	[ self atEnd ] whileFalse: [ 
-		self nextProcessed.
-		self isCurrentProcessed ifTrue: [
-			newArray add: currentProcessed ] ].
-	^ newArray
-]
-
-{ #category : #'public-streaming' }
-DeepTraverser >> upToProcessed: anObject [
-	| newArray |
-	newArray := OrderedCollection new.
-	[ self atEnd not and: [ (self nextProcessed = anObject) not and: [ self isCurrentProcessed ] ] ] whileTrue: [ 
-		 newArray add: currentProcessed ].
-	^ newArray
-]
-
-{ #category : #'accessing-convenience' }
+{ #category : #accessing }
 DeepTraverser >> withAllStart: aCollection [
-	objectsToProcess := OrderedCollection withAll: aCollection. " aCollection must not be touched ! "
-	aCollection ifNotEmpty: [ 
-		self withStart: aCollection anyOne " compatibility: probably #first " ]
+	initializer := [ self withAllStart: aCollection ].
+	
+	start := aCollection anyOne.
+	first := start.
+	current := nil.
+	
+	objectsToTraverse := OrderedCollection withAll: aCollection. 
+	objectsToTraverseAndTraversed := IdentitySet withAll: aCollection. 
+	objectsTraversed := IdentitySet new.
 ]
 
-{ #category : #'accessing-convenience' }
+{ #category : #accessing }
 DeepTraverser >> withStart: anObject [
+	initializer := [ self withStart: anObject ].
+	
 	start := anObject.
-	first := anObject
+	first := anObject.
+	current := nil.
+	
+	objectsToTraverse := OrderedCollection with: start.
+	objectsToTraverseAndTraversed := IdentitySet with: start.
+	objectsTraversed := IdentitySet new.
 ]
 
-{ #category : #'accessing-convenience' }
+{ #category : #accessing }
 DeepTraverser >> withoutStart: anObject [
+	initializer := [ self withoutStart: anObject ].
+
 	start := anObject.
-	first := nil
+	first := nil.
+	current := nil.
+	
+	objectsToTraverse := OrderedCollection with: start.
+	objectsToTraverseAndTraversed := IdentitySet with: start.
+	objectsTraversed := IdentitySet new.
+	
 ]

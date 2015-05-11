@@ -1,7 +1,7 @@
 Extension { #name : #MessageSend }
 
 { #category : #'*DeepTraverser' }
-MessageSend >> withIterator: anIterator perform: anObject [
+MessageSend >> withIterator: anIterator action: anObject [
 	self value: anObject
 ]
 
