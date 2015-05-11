@@ -227,7 +227,7 @@ Object >> withDeepCollect: aTraversalBlock [
 	Number withDeepCollect: #subclasses"
 
 	^ self 
-		withStream: aTraversalBlock 
+		withDeep: aTraversalBlock 
 		collect: [ :each | each ]
 ]
 
