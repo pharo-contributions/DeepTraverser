@@ -11,7 +11,8 @@ Collection >> deep: aBlock1 do: aBlock2 [
 
 { #category : #'*DeepTraverser-private' }
 Collection >> pushForIterator: anIterator [
-	anIterator pushAllForIteration: self
+	self do: [ :each | 
+		each pushForIterator: anIterator ]
 ]
 
 { #category : #'*DeepTraverser' }

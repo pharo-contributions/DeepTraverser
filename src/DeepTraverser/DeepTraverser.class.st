@@ -88,12 +88,6 @@ DeepTraverser >> position [
 ]
 
 { #category : #private }
-DeepTraverser >> pushAllForIteration: anObject [
-	anObject do: [ :each | 
-		self pushForIteration: each ]
-]
-
-{ #category : #private }
 DeepTraverser >> pushForIteration: anObject [
 	(objectsToTraverseAndTraversed includes: anObject) ifTrue: [ ^ self ].
 	objectsToTraverse add: anObject.
