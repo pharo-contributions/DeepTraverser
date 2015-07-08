@@ -85,9 +85,9 @@ ConfigurationOfDeepTraverser >> project [
 ConfigurationOfDeepTraverser >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.1'.
+	spec for: #'common' version: '1.2'.
 	spec for: #'pharo3.x' version: '1.0'.
-	spec for: #'pharo4.x' version: '1.1'.
+	spec for: #'pharo4.x' version: '1.2'.
 
 ]
 
@@ -114,5 +114,18 @@ ConfigurationOfDeepTraverser >> version11: spec [
 		spec author: 'AndreiChis'.
 		spec timestamp: '5/18/2015 00:45'.
 		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.9'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfDeepTraverser >> version12: spec [
+	<version: '1.2' imports: #('1.0-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 1.2'.
+		spec author: 'TudorGirba'.
+		spec timestamp: '7/8/2015 07:45'.
+		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.10'. ].
 
 ]
