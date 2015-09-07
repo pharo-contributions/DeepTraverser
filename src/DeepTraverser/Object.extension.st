@@ -104,6 +104,20 @@ Object >> deepCollect: aTraversalBlock [
 ]
 
 { #category : #'*DeepTraverser' }
+Object >> deepCollect: aBlock as: aCollectionClass [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	returns a aCollectionClass containing each traversed object.
+	
+	For example:
+	Number deepCollect: #subclasses as: Set"
+	
+	^ self 
+		deep: aBlock 
+		collect: [ :each | each ]
+		as: aCollectionClass
+]
+
+{ #category : #'*DeepTraverser' }
 Object >> deepCollectAsSet: aBlock [
 	"traverses all objects starting with the receiver using aTraversalBlock, and
 	returns a Set containing each traversed object.
