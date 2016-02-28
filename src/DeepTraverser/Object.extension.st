@@ -91,6 +91,26 @@ Object >> deep: aTraversalBlock flatCollect: aCollectBlock as: aCollectionClass 
 ]
 
 { #category : #'*DeepTraverser' }
+Object >> deep: aBlock1 select: aBlock2 [
+	^ self 
+		withDeep: aBlock1 
+		select: aBlock2 
+		collect: [ :each | each ] 
+		as: OrderedCollection
+]
+
+{ #category : #'*DeepTraverser' }
+Object >> deep: aBlock1 select: aBlock2 collect: aBlock3 as: aClass [
+	| result |
+	result := aClass new.
+	self 
+		deep: aBlock1 
+		do: [ :each | (aBlock2 value: each) 
+			ifTrue: [ result add: (aBlock3 value: each) ] ].
+	^ result.
+]
+
+{ #category : #'*DeepTraverser' }
 Object >> deepCollect: aTraversalBlock [
 	"traverses all objects starting with the receiver using aTraversalBlock, and
 	returns an OrderedCollection containing each traversed object.
