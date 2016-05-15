@@ -1,11 +1,11 @@
 Extension { #name : #BlockClosure }
 
 { #category : #'*DeepTraverser' }
-BlockClosure >> withIterator: anIterator action: anObject [ 
-	self value: anObject
+BlockClosure >> withIterator: anIterator traverse: anObject [ 
+	(self value: anObject) pushForIterator: anIterator
 ]
 
 { #category : #'*DeepTraverser' }
-BlockClosure >> withIterator: anIterator traverse: anObject [ 
-	(self value: anObject) pushForIterator: anIterator
+BlockClosure >> withIteratorAction: anIterator from: from to: to [ 
+	self cull: to cull: from
 ]

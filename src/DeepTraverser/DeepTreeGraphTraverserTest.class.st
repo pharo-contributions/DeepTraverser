@@ -109,7 +109,7 @@ DeepTreeGraphTraverserTest >> testStreaming [
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
 		action: [ :item | performed := item ];
 		yourself.
-
+ 
 	self assert: iterator next = $a.
 	self assert: iterator next = $b.	
 		

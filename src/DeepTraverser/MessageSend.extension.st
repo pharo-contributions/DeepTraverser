@@ -1,11 +1,11 @@
 Extension { #name : #MessageSend }
 
 { #category : #'*DeepTraverser' }
-MessageSend >> withIterator: anIterator action: anObject [
-	self value: anObject
+MessageSend >> withIterator: anIterator traverse: anObject [
+	(self value: anObject) pushForIterator: anIterator
 ]
 
 { #category : #'*DeepTraverser' }
-MessageSend >> withIterator: anIterator traverse: anObject [
-	(self value: anObject) pushForIterator: anIterator
+MessageSend >> withIteratorAction: anIterator from: from to: to [ 
+	self cull: to cull: from
 ]

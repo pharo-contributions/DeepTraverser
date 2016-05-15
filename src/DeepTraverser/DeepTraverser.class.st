@@ -11,7 +11,8 @@ Class {
 		'action',
 		'objectsToTraverse',
 		'objectsTraversed',
-		'objectsToTraverseAndTraversed'
+		'objectsToTraverseAndTraversed',
+		'edgesToTraverse'
 	],
 	#category : #DeepTraverser
 }
@@ -31,26 +32,63 @@ DeepTraverser >> atEnd [
 	^ self hasNext not
 ]
 
-{ #category : #'accessing-convenience' }
+{ #category : #'public-streaming' }
 DeepTraverser >> current [
 	^ current
+]
+
+{ #category : #'public-streaming' }
+DeepTraverser >> currentEdge [
+	^ self edgeFor: current
 ]
 
 { #category : #'public-enumerating' }
 DeepTraverser >> do: aBlock [
 	[ self hasNext ] 
-		whileTrue: [ aBlock value: self next ]
+		whileTrue: [ self nextEdgeDo: aBlock ]
 ]
 
 { #category : #private }
 DeepTraverser >> doAction [
 	start == current ifTrue: [ start == first ifFalse: [ ^ self ] ].
-	self action withIterator: self action: current.
+	self action withIteratorAction: self 
+		from: ((edgesToTraverse at: current ifAbsent: [ nil ])) 
+		to: current.
 ]
 
 { #category : #private }
 DeepTraverser >> doTraverse [
 	self traverser withIterator: self traverse: current
+]
+
+{ #category : #private }
+DeepTraverser >> edgeFor: anObject [
+	^ (edgesToTraverse at: anObject ifAbsent: [ nil ]) -> anObject
+]
+
+{ #category : #'accessing-convenience' }
+DeepTraverser >> edgesTraversed [
+	^ objectsTraversed collect: [ :each | self edgeFor: each  ]
+]
+
+{ #category : #'public-streaming' }
+DeepTraverser >> edgesUpToAny: aCollection [
+	^ self upToAnyMatching: [ :to :from | 
+		aCollection anySatisfy: [ :assoc | 
+			to = assoc value 
+				and: [ from = assoc key ] ] ]
+]
+
+{ #category : #'public-streaming' }
+DeepTraverser >> edgesUpToAnyMatching: aBlock [
+	^ (self upToAnyMatching: aBlock) collect: [ :each | 
+		self edgeFor: each ]
+]
+
+{ #category : #'public-streaming' }
+DeepTraverser >> edgesUpToEnd [
+	^ self upToEnd collect: [ :each | 
+		self edgeFor: each ]
 ]
 
 { #category : #testing }
@@ -77,6 +115,24 @@ DeepTraverser >> next: anInteger [
 	^ newArray copyFrom: 1 to: index	
 ]
 
+{ #category : #'public-streaming' }
+DeepTraverser >> nextEdge [
+	^ self edgeFor: self next
+]
+
+{ #category : #private }
+DeepTraverser >> nextEdgeDo: aBlock [
+	| next |
+	^ aBlock 
+		cull: (next := self next) 
+		cull: (edgesToTraverse at: next ifAbsent: [ nil ]) 
+]
+
+{ #category : #'public-streaming' }
+DeepTraverser >> nextEdges: anInteger [
+	^ (self next: anInteger) collect: [ :each | self edgeFor: each ]
+]
+
 { #category : #'accessing-convenience' }
 DeepTraverser >> objectsTraversed [
 	^ objectsTraversed copy
@@ -91,7 +147,8 @@ DeepTraverser >> position [
 DeepTraverser >> pushForIteration: anObject [
 	(objectsToTraverseAndTraversed includes: anObject) ifTrue: [ ^ self ].
 	objectsToTraverse add: anObject.
-	objectsToTraverseAndTraversed add: anObject
+	objectsToTraverseAndTraversed add: anObject.
+	edgesToTraverse at: anObject put: current.
 ]
 
 { #category : #'public-streaming' }
@@ -144,7 +201,7 @@ DeepTraverser >> upToAny: aCollection [
 DeepTraverser >> upToAnyMatching: aBlock [
 	| newArray |
 	newArray := OrderedCollection new.
-	[ self hasNext and: [ (aBlock value: self next) not ] ] whileTrue: [ 
+	[ self hasNext and: [ (self nextEdgeDo: aBlock) not ] ] whileTrue: [ 
 		newArray add: current ].
 	^ newArray
 ]
@@ -169,6 +226,7 @@ DeepTraverser >> withAllStart: aCollection [
 	objectsToTraverse := OrderedCollection withAll: aCollection. 
 	objectsToTraverseAndTraversed := IdentitySet withAll: aCollection. 
 	objectsTraversed := IdentitySet new.
+	edgesToTraverse := IdentityDictionary new.
 ]
 
 { #category : #accessing }
@@ -182,6 +240,7 @@ DeepTraverser >> withStart: anObject [
 	objectsToTraverse := OrderedCollection with: start.
 	objectsToTraverseAndTraversed := IdentitySet with: start.
 	objectsTraversed := IdentitySet new.
+	edgesToTraverse := IdentityDictionary new
 ]
 
 { #category : #accessing }
@@ -195,5 +254,5 @@ DeepTraverser >> withoutStart: anObject [
 	objectsToTraverse := OrderedCollection with: start.
 	objectsToTraverseAndTraversed := IdentitySet with: start.
 	objectsTraversed := IdentitySet new.
-	
+	edgesToTraverse := IdentityDictionary new.
 ]

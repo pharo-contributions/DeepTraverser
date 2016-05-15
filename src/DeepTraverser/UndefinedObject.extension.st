@@ -6,11 +6,11 @@ UndefinedObject >> pushForIterator: anIterator [
 ]
 
 { #category : #'*DeepTraverser' }
-UndefinedObject >> withIterator: anIterator action: anObject [
+UndefinedObject >> withIterator: anIterator traverse: anObject [
 	" do nothing "
 ]
 
 { #category : #'*DeepTraverser' }
-UndefinedObject >> withIterator: anIterator traverse: anObject [
+UndefinedObject >> withIteratorAction: anIterator from: from to: to [ 
 	" do nothing "
 ]
