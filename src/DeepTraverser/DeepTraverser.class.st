@@ -75,7 +75,10 @@ DeepTraverser >> edgeAction: anObject [
 
 { #category : #private }
 DeepTraverser >> edgeFor: anObject [
-	^ (edgesToTraverse at: anObject ifAbsent: [ nil ]) -> anObject
+	^ (edgesToTraverse at: anObject ifAbsent: [ 
+		anObject isNil 
+			ifTrue: [ ^ nil ] 
+			ifFalse: [ nil ] ]) -> anObject
 ]
 
 { #category : #'public-enumerating' }
@@ -293,7 +296,7 @@ DeepTraverser >> withAllStart: aCollection [
 
 { #category : #'accessing-convenience' }
 DeepTraverser >> withStart: anObject [
-	" start traversal including anObject as the first node being traversed. The first edge will be nil -> anObject "
+	" start traversal at anObject. Perform the first action on anObject. The first edge will be nil -> anObject "
 	initializer := [ self withStart: anObject ]. " used for streaming/reset "
 	
 	start := anObject.
@@ -308,7 +311,7 @@ DeepTraverser >> withStart: anObject [
 
 { #category : #'accessing-convenience' }
 DeepTraverser >> withoutStart: anObject [
-	" start traversal excluding anObject as the first node being traversed. The first node will be anObject -> ? "
+	" start traversal at anObject. Do not perform the first action on anObject. The first edge will be nil -> anObject "
 	initializer := [ self withoutStart: anObject ]. " used for streaming/reset "
 
 	start := anObject.

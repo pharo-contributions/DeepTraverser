@@ -131,6 +131,7 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 		nodeAction: [ :item | performed := item ];
 		yourself.
 
+	self assert: iterator current isNil.
 	self assert: iterator next = $a.
 	self assert: iterator next = $b.	
 	self assert: iterator next = $c.
@@ -148,7 +149,7 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 ]
 
 { #category : #tests }
-DeepTreeGraphTraverserTest >> testStreamingNextEdge [
+DeepTreeGraphTraverserTest >> testStreamingNextEdgeWithStart [
 	| iterator fromNode toNode |
 	iterator := DeepTraverser new 
 		withStart: $a;
@@ -156,8 +157,15 @@ DeepTreeGraphTraverserTest >> testStreamingNextEdge [
 		edgeAction: [ :from :to | fromNode := from . toNode := to];
 		yourself.
 
+	self assert: iterator currentEdge isNil.
 	self assert: iterator nextEdge = (nil -> $a).
-	self assert: iterator nextEdge = ($a -> $b).	
+	self assert: fromNode isNil.
+	self assert: toNode = $a.
+	
+	self assert: iterator nextEdge = ($a -> $b).
+	self assert: fromNode = $a.
+	self assert: toNode = $b.
+		
 	self assert: iterator nextEdge = ($a -> $c).
 	self assert: iterator nextEdge = ($a -> $d).
 	self assert: iterator nextEdge = ($b -> $e).
@@ -166,10 +174,49 @@ DeepTreeGraphTraverserTest >> testStreamingNextEdge [
 	self assert: iterator nextEdge = ($d -> $h).
 	self assert: iterator nextEdge = ($d -> $i).
 	self assert: iterator nextEdge = ($f -> $j).
-	self assert: iterator nextEdge = ($f -> $k).
 	
+	self assert: iterator nextEdge = ($f -> $k).
 	self assert: fromNode = $f.
 	self assert: toNode = $k.
+	
+	self should: [ iterator nextEdge ] raise: Error
+]
+
+{ #category : #tests }
+DeepTreeGraphTraverserTest >> testStreamingNextEdgeWithoutStart [
+	| iterator fromNode toNode |
+	iterator := DeepTraverser new 
+		withoutStart: $a;
+		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
+		edgeAction: [ :from :to | fromNode := from . toNode := to];
+		yourself.
+
+	self assert: iterator currentEdge isNil.
+	
+	self assert: iterator nextEdge = (nil  -> $a).
+	self assert: fromNode isNil.
+	self assert: toNode isNil.
+	
+	self assert: iterator nextEdge = ($a -> $b).
+	self assert: fromNode = $a.
+	self assert: toNode = $b.
+		
+	self assert: iterator nextEdge = ($a -> $c).
+	self assert: fromNode = $a.
+	self assert: toNode = $c.
+	
+	self assert: iterator nextEdge = ($a -> $d).
+	self assert: iterator nextEdge = ($b -> $e).
+	self assert: iterator nextEdge = ($b -> $f).
+	self assert: iterator nextEdge = ($c -> $g).
+	self assert: iterator nextEdge = ($d -> $h).
+	self assert: iterator nextEdge = ($d -> $i).
+	self assert: iterator nextEdge = ($f -> $j).
+	
+	self assert: iterator nextEdge = ($f -> $k).
+	self assert: fromNode = $f.
+	self assert: toNode = $k.
+	
 	self should: [ iterator nextEdge ] raise: Error
 ]
 

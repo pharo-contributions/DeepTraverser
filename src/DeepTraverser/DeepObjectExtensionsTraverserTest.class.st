@@ -47,7 +47,45 @@ DeepObjectExtensionsTraverserTest >> testDeepDo [
 	1 
 		deep: [ :each | self nextGraphElementsFrom: each ]
 		do: [ :each | trace add: each ].
-	self assert: trace equals: #(2 3) asOrderedCollection
+	self assert: trace equals: #(2 3) asOrderedCollection.
+	
+	trace := OrderedCollection new.
+	0 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		do: [ :each | trace add: each ].
+	self assert: trace equals: #(1 2 3) asOrderedCollection
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepDoDifferencesInDeclaration [
+	| trace expectedTrace |
+	expectedTrace := #( 0 1 2 3 ) asOrderedCollection.
+	
+	trace := OrderedCollection new.
+	0 
+		withDeep: [ :each | self nextGraphElementsFrom: each ]
+		do: [ :each | trace add: each ].
+	self assert: trace equals: expectedTrace.
+	
+	trace := OrderedCollection new.
+	graph 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		do: [ :each | trace add: each ].
+	self assert: trace equals: expectedTrace.
+	
+	trace := OrderedCollection new.
+	graph 
+		withDeep: [ :each | self nextGraphElementsFrom: each ]
+		do: [ :each | trace add: each ].
+	self assert: trace equals: expectedTrace.
+	
+	trace := OrderedCollection new.
+	(DeepTraverser new 
+		withStart: 0;
+		traverser: [ :each | self nextGraphElementsFrom: each ];
+		nodeAction: [ :each | trace add: each ];
+		yourself) run.
+	self assert: trace equals: expectedTrace.
 ]
 
 { #category : #tests }
@@ -83,7 +121,13 @@ DeepObjectExtensionsTraverserTest >> testWithDeepDo [
 	1 
 		withDeep: [ :each | self nextGraphElementsFrom: each ] 
 		do: [ :each | trace add: each ].
-	self assert: trace equals: #(1 2 3) asOrderedCollection
+	self assert: trace equals: #(1 2 3) asOrderedCollection.
+	
+	trace := OrderedCollection new.
+	0 
+		withDeep: [ :each | self nextGraphElementsFrom: each ] 
+		do: [ :each | trace add: each ].
+	self assert: trace equals: #(0 1 2 3) asOrderedCollection
 ]
 
 { #category : #tests }
