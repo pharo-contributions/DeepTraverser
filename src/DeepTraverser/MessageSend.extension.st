@@ -6,6 +6,11 @@ MessageSend >> withIterator: anIterator traverse: anObject [
 ]
 
 { #category : #'*DeepTraverser' }
-MessageSend >> withIteratorAction: anIterator from: from to: to [ 
-	self cull: to cull: from
+MessageSend >> withIteratorEdgeAction: anIterator [
+	anIterator performEdgeActionMessageSend: self
+]
+
+{ #category : #'*DeepTraverser' }
+MessageSend >> withIteratorNodeAction: anIterator [
+	anIterator performNodeActionMessageSend: self
 ]

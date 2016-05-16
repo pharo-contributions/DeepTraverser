@@ -1,42 +1,36 @@
-Extension { #name : #Collection }
+Extension { #name : #Dictionary }
 
 { #category : #'*DeepTraverser' }
-Collection >> deep: aBlock1 do: aBlock2 [
+Dictionary >> deep: aBlock1 do: aBlock2 [
 	(DeepTraverser new 
-		withAllStart: self;
+		withStart: self keys anyOne;
 		traverser: aBlock1;
 		nodeAction: aBlock2;
 		yourself) run
 ]
 
 { #category : #'*DeepTraverser' }
-Collection >> deep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
+Dictionary >> deep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
 	(DeepTraverser new 
-		withAllStart: self;
+		withoutStart: self keys anyOne;
 		traverser: aTraversalBlock;
 		edgeAction: anObjectEdgeActionBlock;
 		yourself) run
 ]
 
-{ #category : #'*DeepTraverser-private' }
-Collection >> pushForIterator: anIterator [
-	self do: [ :each | 
-		each pushForIterator: anIterator ]
-]
-
 { #category : #'*DeepTraverser' }
-Collection >> withDeep: aBlock1 do: aBlock2 [
+Dictionary >> withDeep: aBlock1 do: aBlock2 [
 	(DeepTraverser new 
-		withAllStart: self;
+		withStart: self keys anyOne;
 		traverser: aBlock1;
 		nodeAction: aBlock2;
 		yourself) run
 ]
 
 { #category : #'*DeepTraverser' }
-Collection >> withDeep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
+Dictionary >> withDeep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
 	(DeepTraverser new 
-		withAllStart: self;
+		withStart: self keys anyOne;
 		traverser: aTraversalBlock;
 		edgeAction: anObjectEdgeActionBlock;
 		yourself) run

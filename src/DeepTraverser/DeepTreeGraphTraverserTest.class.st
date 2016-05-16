@@ -107,7 +107,7 @@ DeepTreeGraphTraverserTest >> testStreaming [
 	iterator := DeepTraverser new 
 		withStart: $a;
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
-		action: [ :item | performed := item ];
+		nodeAction: [ :item | performed := item ];
 		yourself.
  
 	self assert: iterator next = $a.
@@ -128,7 +128,7 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 	iterator := DeepTraverser new 
 		withStart: $a;
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
-		action: [ :item | performed := item ];
+		nodeAction: [ :item | performed := item ];
 		yourself.
 
 	self assert: iterator next = $a.
@@ -148,12 +148,38 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 ]
 
 { #category : #tests }
+DeepTreeGraphTraverserTest >> testStreamingNextEdge [
+	| iterator fromNode toNode |
+	iterator := DeepTraverser new 
+		withStart: $a;
+		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
+		edgeAction: [ :from :to | fromNode := from . toNode := to];
+		yourself.
+
+	self assert: iterator nextEdge = (nil -> $a).
+	self assert: iterator nextEdge = ($a -> $b).	
+	self assert: iterator nextEdge = ($a -> $c).
+	self assert: iterator nextEdge = ($a -> $d).
+	self assert: iterator nextEdge = ($b -> $e).
+	self assert: iterator nextEdge = ($b -> $f).
+	self assert: iterator nextEdge = ($c -> $g).
+	self assert: iterator nextEdge = ($d -> $h).
+	self assert: iterator nextEdge = ($d -> $i).
+	self assert: iterator nextEdge = ($f -> $j).
+	self assert: iterator nextEdge = ($f -> $k).
+	
+	self assert: fromNode = $f.
+	self assert: toNode = $k.
+	self should: [ iterator nextEdge ] raise: Error
+]
+
+{ #category : #tests }
 DeepTreeGraphTraverserTest >> testStreamingNextProcessed [
 	| iterator performed |
 	iterator := DeepTraverser new 
 		withStart: $a;
 		traverser: [ :item | self graph at: item ifAbsent: [ #() ] ];
-		action: [ :item | performed := item ];
+		nodeAction: [ :item | performed := item ];
 		yourself.
 
 	#( $a $b $c $d $e $f $g $h $i $j $k ) do: [ :each |

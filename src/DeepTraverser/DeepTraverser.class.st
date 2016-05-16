@@ -8,7 +8,8 @@ Class {
 		'previous',
 		'current',
 		'traverser',
-		'action',
+		'nodeAction',
+		'edgeAction',
 		'objectsToTraverse',
 		'objectsTraversed',
 		'objectsToTraverseAndTraversed',
@@ -17,14 +18,16 @@ Class {
 	#category : #DeepTraverser
 }
 
-{ #category : #accessing }
+{ #category : #'accessing-compatibility' }
 DeepTraverser >> action [
-	^ action
+	self deprecated: 'please use #nodeAction instead'.
+	^ self nodeAction
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing-compatibility' }
 DeepTraverser >> action: anObject [
-	action := anObject
+	self deprecated: 'please use #nodeAction: instead'.
+	self nodeAction: anObject
 ]
 
 { #category : #testing }
@@ -45,15 +48,14 @@ DeepTraverser >> currentEdge [
 { #category : #'public-enumerating' }
 DeepTraverser >> do: aBlock [
 	[ self hasNext ] 
-		whileTrue: [ self nextEdgeDo: aBlock ]
+		whileTrue: [ self next ]
 ]
 
 { #category : #private }
 DeepTraverser >> doAction [
 	start == current ifTrue: [ start == first ifFalse: [ ^ self ] ].
-	self action withIteratorAction: self 
-		from: ((edgesToTraverse at: current ifAbsent: [ nil ])) 
-		to: current.
+	self nodeAction withIteratorNodeAction: self.
+	self edgeAction withIteratorEdgeAction: self
 ]
 
 { #category : #private }
@@ -61,9 +63,25 @@ DeepTraverser >> doTraverse [
 	self traverser withIterator: self traverse: current
 ]
 
+{ #category : #accessing }
+DeepTraverser >> edgeAction [
+	^ edgeAction
+]
+
+{ #category : #accessing }
+DeepTraverser >> edgeAction: anObject [
+	edgeAction := anObject
+]
+
 { #category : #private }
 DeepTraverser >> edgeFor: anObject [
 	^ (edgesToTraverse at: anObject ifAbsent: [ nil ]) -> anObject
+]
+
+{ #category : #'public-enumerating' }
+DeepTraverser >> edgesDo: aBlock [
+	[ self hasNext ] 
+		whileTrue: [ self nextEdgeDo: aBlock ]
 ]
 
 { #category : #'accessing-convenience' }
@@ -123,9 +141,11 @@ DeepTraverser >> nextEdge [
 { #category : #private }
 DeepTraverser >> nextEdgeDo: aBlock [
 	| next |
+	next := self next.
 	^ aBlock 
-		cull: (next := self next) 
-		cull: (edgesToTraverse at: next ifAbsent: [ nil ]) 
+		value: (edgesToTraverse at: next ifAbsent: [ nil ]) 
+		value: next
+		
 ]
 
 { #category : #'public-streaming' }
@@ -133,9 +153,49 @@ DeepTraverser >> nextEdges: anInteger [
 	^ (self next: anInteger) collect: [ :each | self edgeFor: each ]
 ]
 
+{ #category : #accessing }
+DeepTraverser >> nodeAction [
+	^ nodeAction
+]
+
+{ #category : #accessing }
+DeepTraverser >> nodeAction: anObject [
+	nodeAction := anObject
+]
+
 { #category : #'accessing-convenience' }
 DeepTraverser >> objectsTraversed [
 	^ objectsTraversed copy
+]
+
+{ #category : #'private-double-dispatch' }
+DeepTraverser >> performEdgeActionBlock: aBlock [
+	aBlock value: ((edgesToTraverse at: current ifAbsent: [ nil ])) value: current 
+]
+
+{ #category : #'private-double-dispatch' }
+DeepTraverser >> performEdgeActionMessageSend: aMessageSend [
+	aMessageSend value: ((edgesToTraverse at: current ifAbsent: [ nil ])) value: current 
+]
+
+{ #category : #'private-double-dispatch' }
+DeepTraverser >> performEdgeActionSymbol: aSymbol [
+	current perform: aSymbol withEnoughArguments: { edgesToTraverse at: current ifAbsent: [ nil ] }
+]
+
+{ #category : #'private-double-dispatch' }
+DeepTraverser >> performNodeActionBlock: aBlock [
+	aBlock value: current
+]
+
+{ #category : #'private-double-dispatch' }
+DeepTraverser >> performNodeActionMessageSend: aMessageSend [
+	aMessageSend value: current
+]
+
+{ #category : #'private-double-dispatch' }
+DeepTraverser >> performNodeActionSymbol: aSymbol [
+	current perform: aSymbol
 ]
 
 { #category : #'public-streaming' }
@@ -162,7 +222,7 @@ DeepTraverser >> run [
 		whileTrue: [ self next ]
 ]
 
-{ #category : #'accessing-compatibility' }
+{ #category : #'accessing-convenience' }
 DeepTraverser >> traverse: anObject [
 	self withStart: anObject.
 	self run.
@@ -170,6 +230,7 @@ DeepTraverser >> traverse: anObject [
 
 { #category : #'accessing-compatibility' }
 DeepTraverser >> traversedObjects [
+	self deprecated: 'please use #objectsTraversed instead'.
 	^ self objectsTraversed
 ]
 
@@ -215,9 +276,10 @@ DeepTraverser >> upToEnd [
 	^ newArray
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing-convenience' }
 DeepTraverser >> withAllStart: aCollection [
-	initializer := [ self withAllStart: aCollection ].
+	" start traversal including each of aCollection as first nodes being traversed "
+	initializer := [ self withAllStart: aCollection ]. " used for streaming/reset "
 	
 	start := aCollection anyOne.
 	first := start.
@@ -226,12 +288,13 @@ DeepTraverser >> withAllStart: aCollection [
 	objectsToTraverse := OrderedCollection withAll: aCollection. 
 	objectsToTraverseAndTraversed := IdentitySet withAll: aCollection. 
 	objectsTraversed := IdentitySet new.
-	edgesToTraverse := IdentityDictionary new.
+	edgesToTraverse := IdentityDictionary new
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing-convenience' }
 DeepTraverser >> withStart: anObject [
-	initializer := [ self withStart: anObject ].
+	" start traversal including anObject as the first node being traversed. The first edge will be nil -> anObject "
+	initializer := [ self withStart: anObject ]. " used for streaming/reset "
 	
 	start := anObject.
 	first := anObject.
@@ -243,9 +306,10 @@ DeepTraverser >> withStart: anObject [
 	edgesToTraverse := IdentityDictionary new
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing-convenience' }
 DeepTraverser >> withoutStart: anObject [
-	initializer := [ self withoutStart: anObject ].
+	" start traversal excluding anObject as the first node being traversed. The first node will be anObject -> ? "
+	initializer := [ self withoutStart: anObject ]. " used for streaming/reset "
 
 	start := anObject.
 	first := nil.
@@ -254,5 +318,5 @@ DeepTraverser >> withoutStart: anObject [
 	objectsToTraverse := OrderedCollection with: start.
 	objectsToTraverseAndTraversed := IdentitySet with: start.
 	objectsTraversed := IdentitySet new.
-	edgesToTraverse := IdentityDictionary new.
+	edgesToTraverse := IdentityDictionary new
 ]

@@ -51,6 +51,16 @@ DeepObjectExtensionsTraverserTest >> testDeepDo [
 ]
 
 { #category : #tests }
+DeepObjectExtensionsTraverserTest >> testDeepEdgesDo [
+	| trace |
+	trace := OrderedCollection new.
+	1 
+		deep: [ :each | self nextGraphElementsFrom: each ]
+		edgesDo: [ :from :to | trace add: (from -> to) ].
+	self assert: trace equals: { 1->2. 1->3 } asOrderedCollection.
+]
+
+{ #category : #tests }
 DeepObjectExtensionsTraverserTest >> testDeepFlatCollectWithBlock [
 	| result |
 	result := 1 
@@ -74,6 +84,16 @@ DeepObjectExtensionsTraverserTest >> testWithDeepDo [
 		withDeep: [ :each | self nextGraphElementsFrom: each ] 
 		do: [ :each | trace add: each ].
 	self assert: trace equals: #(1 2 3) asOrderedCollection
+]
+
+{ #category : #tests }
+DeepObjectExtensionsTraverserTest >> testWithDeepEdgesDo [
+	| trace |
+	trace := OrderedCollection new.
+	0 
+		withDeep: [ :each | self nextGraphElementsFrom: each ] 
+		edgesDo: [ :from :to | trace add: (from -> to) ].
+	self assert: trace equals: { nil->0. 0->1. 1->2. 1->3 } asOrderedCollection.
 ]
 
 { #category : #tests }

@@ -6,6 +6,11 @@ Symbol >> withIterator: anIterator traverse: anObject [
 ]
 
 { #category : #'*DeepTraverser' }
-Symbol >> withIteratorAction: anIterator from: from to: to [ 
-	to perform: self withEnoughArguments: { from }
+Symbol >> withIteratorEdgeAction: anIterator [
+	anIterator performEdgeActionSymbol: self
+]
+
+{ #category : #'*DeepTraverser' }
+Symbol >> withIteratorNodeAction: anIterator [
+	anIterator performNodeActionSymbol: self
 ]

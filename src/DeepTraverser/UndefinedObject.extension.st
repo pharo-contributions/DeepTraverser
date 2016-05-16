@@ -11,6 +11,11 @@ UndefinedObject >> withIterator: anIterator traverse: anObject [
 ]
 
 { #category : #'*DeepTraverser' }
-UndefinedObject >> withIteratorAction: anIterator from: from to: to [ 
+UndefinedObject >> withIteratorEdgeAction: anIterator [
+	" do nothing "
+]
+
+{ #category : #'*DeepTraverser' }
+UndefinedObject >> withIteratorNodeAction: anIterator [
 	" do nothing "
 ]
