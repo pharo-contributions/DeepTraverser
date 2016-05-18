@@ -10,6 +10,16 @@ Collection >> deep: aBlock1 do: aBlock2 [
 ]
 
 { #category : #'*DeepTraverser' }
+Collection >> deep: aBlock1 do: aBlock2 edgesDo: aBlock3 [
+	(DeepTraverser new 
+		withAllStart: self;
+		traverser: aBlock1;
+		nodeAction: aBlock2;
+		edgeAction: aBlock3;
+		yourself) run
+]
+
+{ #category : #'*DeepTraverser' }
 Collection >> deep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
 	(DeepTraverser new 
 		withAllStart: self;

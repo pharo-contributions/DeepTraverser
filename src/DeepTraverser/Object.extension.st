@@ -54,6 +54,17 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 ]
 
 { #category : #'*DeepTraverser' }
+Object >> deep: aTraversalBlock do: anObjectActionBlock edgesDo: anObjectEdgeActionBlock [
+
+	(DeepTraverser new 
+		withoutStart: self;
+		traverser: aTraversalBlock;
+		nodeAction: anObjectActionBlock;
+		edgeAction: anObjectEdgeActionBlock;
+		yourself) run
+]
+
+{ #category : #'*DeepTraverser' }
 Object >> deep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
 
 	(DeepTraverser new 
