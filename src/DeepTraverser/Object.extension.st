@@ -46,32 +46,39 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 		deep: #subclasses 
 		do: [:each | Transcript show: each; cr]"
 	
-	(DeepTraverser new 
-		withoutStart: self;
-		traverser: aTraversalBlock;
-		nodeAction: anObjectActionBlock;
-		yourself) run
+	| traverser action |
+	action := DeepCustomActionStrategy new objectAction: anObjectActionBlock.
+	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
+	traverser 
+		action: action;
+		traverse: self
 ]
 
 { #category : #'*DeepTraverser' }
-Object >> deep: aTraversalBlock do: anObjectActionBlock edgesDo: anObjectEdgeActionBlock [
-
-	(DeepTraverser new 
-		withoutStart: self;
-		traverser: aTraversalBlock;
-		nodeAction: anObjectActionBlock;
-		edgeAction: anObjectEdgeActionBlock;
-		yourself) run
+Object >> deep: aTraversalBlock do: anObjectActionBlock edgesDo: aRelationBlock [
+	self deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock
 ]
 
 { #category : #'*DeepTraverser' }
-Object >> deep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
+Object >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	"traverses all objects starting with the receiver using aTraversalBlock, and
+	for each triggers anObjectActionBlock, and
+	for each relation between two traversed objects triggers aRelationBlock.
+	
+	For example:
+	Number 
+		deep: #subclasses 
+		do: [:each | Transcript show: each; cr]
+		relationDo: [ :from :to | Transcript show: from; show: ' <-- '; show: to; cr ]"
 
-	(DeepTraverser new 
-		withoutStart: self;
-		traverser: aTraversalBlock;
-		edgeAction: anObjectEdgeActionBlock;
-		yourself) run
+	| traverser action |
+	action := DeepCustomActionStrategy new 
+					objectAction: anObjectActionBlock;
+					relationAction: aRelationBlock.
+	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
+	traverser 
+		action: action;
+		traverse: self
 ]
 
 { #category : #'*DeepTraverser' }
@@ -170,33 +177,10 @@ Object >> deepCollectAsSet: aBlock [
 	fact that the traversed objects are kept in a set inside the traverser
 	and we simply return that set"
 	
-	^ self 
-		deep: aBlock 
-		collect: [ :each | each ]
-		as: Set
-]
-
-{ #category : #'*DeepTraverser-private' }
-Object >> pushForIterator: anIterator [
-	anIterator pushForIteration: self
-]
-
-{ #category : #'*DeepTraverser' }
-Object >> withDeep: aBlock1 collect: aBlock2 [
-	^ self 
-		withDeep: aBlock1 
-		collect: aBlock2 
-		as: OrderedCollection 
-]
-
-{ #category : #'*DeepTraverser' }
-Object >> withDeep: aBlock1 collect: aBlock2 as: aClass [
-	| result |
-	result := aClass new.
-	self 
-		withDeep: aBlock1 
-		do: [ :each | result add: (aBlock2 value: each) ].
-	^ result.
+	^ ((DeepTraverser withCustomTraversal: aBlock)
+		traverse: self)
+		remove: self;
+		yourself
 ]
 
 { #category : #'*DeepTraverser' }
@@ -209,21 +193,42 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
 		withDeep: #subclasses 
 		do: [:each | Transcript show: each]"
 
-	(DeepTraverser new 
-		withStart: self;
-		traverser: aTraversalBlock;
-		nodeAction: anObjectActionBlock;
-		yourself) run
+	| traverser action |
+	action := DeepCustomActionStrategy new objectAction: anObjectActionBlock.
+	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
+	traverser 
+		action: action;
+		firstObjectAction: action;
+		traverse: self
 ]
 
 { #category : #'*DeepTraverser' }
-Object >> withDeep: aTraversalBlock edgesDo: anObjectEdgeActionBlock [
+Object >> withDeep: aTraversalBlock do: anObjectActionBlock edgesDo: aRelationBlock [
+	self withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock
 
-	(DeepTraverser new 
-		withStart: self;
-		traverser: aTraversalBlock;
-		edgeAction: anObjectEdgeActionBlock;
-		yourself) run
+]
+
+{ #category : #'*DeepTraverser' }
+Object >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	"traverses all objects starting with and including the receiver using aTraversalBlock, and
+	for each triggers anObjectActionBlock, and
+	for each relation between two traversed objects triggers aRelationBlock.
+	
+	For example:
+	Number 
+		withDeep: #subclasses 
+		do: [:each | Transcript show: each]
+		relationDo: [ :from :to | Transcript show: from; show: ‘ <-- '; show: to; cr ]"
+
+	| traverser action |
+	action := DeepCustomActionStrategy new 
+					objectAction: anObjectActionBlock;
+					relationAction: aRelationBlock.
+	traverser := DeepTraverser withCustomTraversal: aTraversalBlock.
+	traverser 
+		action: action;
+		firstObjectAction: action;
+		traverse: self
 ]
 
 { #category : #'*DeepTraverser' }
@@ -264,26 +269,6 @@ Object >> withDeep: aTraversalBlock flatCollect: aCollectBlock as: aCollectionCl
 ]
 
 { #category : #'*DeepTraverser' }
-Object >> withDeep: aBlock1 select: aBlock2 collect: aBlock3 [
-	^ self 
-		withDeep: aBlock1 
-		select: aBlock2 
-		collect: aBlock3 
-		as: OrderedCollection 
-]
-
-{ #category : #'*DeepTraverser' }
-Object >> withDeep: aBlock1 select: aBlock2 collect: aBlock3 as: aClass [
-	| result |
-	result := aClass new.
-	self 
-		withDeep: aBlock1 
-		do: [ :each | (aBlock2 value: each) 
-			ifTrue: [ result add: (aBlock3 value: each) ] ].
-	^ result.
-]
-
-{ #category : #'*DeepTraverser' }
 Object >> withDeepCollect: aTraversalBlock [
 	"traverses all objects starting with and including the receiver using aTraversalBlock, and
 	returns an OrderedCollection containing each traversed object.
@@ -291,15 +276,8 @@ Object >> withDeepCollect: aTraversalBlock [
 	For example:
 	Number withDeepCollect: #subclasses"
 
-	^ self 
-		withDeep: aTraversalBlock 
-		collect: [ :each | each ]
-]
-
-{ #category : #'*DeepTraverser' }
-Object >> withDeepCollect: aBlock1 select: aBlock2 [
-	^ self 
-		withDeep: aBlock1 
-		select: aBlock2 
-		collect: [ :each | each ]
+	| result |
+	result := OrderedCollection new.
+	self withDeep: aTraversalBlock do: [ :each | result add: each ].
+	^ result
 ]

@@ -47,55 +47,24 @@ DeepObjectExtensionsTraverserTest >> testDeepDo [
 	1 
 		deep: [ :each | self nextGraphElementsFrom: each ]
 		do: [ :each | trace add: each ].
-	self assert: trace equals: #(2 3) asOrderedCollection.
-	
-	trace := OrderedCollection new.
-	0 
-		deep: [ :each | self nextGraphElementsFrom: each ]
-		do: [ :each | trace add: each ].
-	self assert: trace equals: #(1 2 3) asOrderedCollection
+	self assert: trace equals: #(2 3) asOrderedCollection
 ]
 
 { #category : #tests }
-DeepObjectExtensionsTraverserTest >> testDeepDoDifferencesInDeclaration [
-	| trace expectedTrace |
-	expectedTrace := #( 0 1 2 3 ) asOrderedCollection.
-	
+DeepObjectExtensionsTraverserTest >> testDeepDoRelationDo [
+	| trace relationTrace |
 	trace := OrderedCollection new.
-	0 
-		withDeep: [ :each | self nextGraphElementsFrom: each ]
-		do: [ :each | trace add: each ].
-	self assert: trace equals: expectedTrace.
-	
-	trace := OrderedCollection new.
-	graph 
-		deep: [ :each | self nextGraphElementsFrom: each ]
-		do: [ :each | trace add: each ].
-	self assert: trace equals: expectedTrace.
-	
-	trace := OrderedCollection new.
-	graph 
-		withDeep: [ :each | self nextGraphElementsFrom: each ]
-		do: [ :each | trace add: each ].
-	self assert: trace equals: expectedTrace.
-	
-	trace := OrderedCollection new.
-	(DeepTraverser new 
-		withStart: 0;
-		traverser: [ :each | self nextGraphElementsFrom: each ];
-		nodeAction: [ :each | trace add: each ];
-		yourself) run.
-	self assert: trace equals: expectedTrace.
-]
-
-{ #category : #tests }
-DeepObjectExtensionsTraverserTest >> testDeepEdgesDo [
-	| trace |
-	trace := OrderedCollection new.
+	relationTrace := OrderedCollection new.
 	1 
 		deep: [ :each | self nextGraphElementsFrom: each ]
-		edgesDo: [ :from :to | trace add: (from -> to) ].
-	self assert: trace equals: { 1->2. 1->3 } asOrderedCollection.
+		do: [ :each | trace add: each ]
+		relationDo: [ :from :to | relationTrace add: from->to ].
+	self 
+		assert: trace 
+		equals: #(2 3) asOrderedCollection.
+	self 
+		assert: relationTrace 
+		equals: {1->2 . 1->3 . 2->3} asOrderedCollection
 ]
 
 { #category : #tests }
@@ -121,23 +90,26 @@ DeepObjectExtensionsTraverserTest >> testWithDeepDo [
 	1 
 		withDeep: [ :each | self nextGraphElementsFrom: each ] 
 		do: [ :each | trace add: each ].
-	self assert: trace equals: #(1 2 3) asOrderedCollection.
-	
-	trace := OrderedCollection new.
-	0 
-		withDeep: [ :each | self nextGraphElementsFrom: each ] 
-		do: [ :each | trace add: each ].
-	self assert: trace equals: #(0 1 2 3) asOrderedCollection
+	self assert: trace equals: #(1 2 3) asOrderedCollection
 ]
 
 { #category : #tests }
-DeepObjectExtensionsTraverserTest >> testWithDeepEdgesDo [
-	| trace |
+DeepObjectExtensionsTraverserTest >> testWithDeepDoRelationDo [
+	| trace relationTrace |
 	trace := OrderedCollection new.
-	0 
+	relationTrace := OrderedCollection new.
+
+	1 
 		withDeep: [ :each | self nextGraphElementsFrom: each ] 
-		edgesDo: [ :from :to | trace add: (from -> to) ].
-	self assert: trace equals: { nil->0. 0->1. 1->2. 1->3 } asOrderedCollection.
+		do: [ :each | trace add: each ]
+		relationDo: [ :from :to | relationTrace add: from->to ].
+	self 
+		assert: trace 
+		equals: #(1 2 3) asOrderedCollection.
+	self 
+		assert: relationTrace 
+		equals: {1->2 . 1->3 . 2->3} asOrderedCollection.
+
 ]
 
 { #category : #tests }
