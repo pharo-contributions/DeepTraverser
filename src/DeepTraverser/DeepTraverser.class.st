@@ -144,11 +144,13 @@ DeepTraverser >> on: anObject [
 
 { #category : #configuring }
 DeepTraverser >> on: anObject1 startWith: anObject2 [
+	" traverse anObject and start at and include anObject2 "
 	self on: anObject1 startWith: anObject2 doFirst: anObject2
 ]
 
 { #category : #configuring }
 DeepTraverser >> on: anObject1 startWith: anObject2 doFirst: anObject3 [
+	" traverse anObject, start at anObject2 and include anObject3 "
 	initializer := [ self on: anObject1 startWith: anObject2 doFirst: anObject3 ].
 	
 	" reset everything "
@@ -157,13 +159,14 @@ DeepTraverser >> on: anObject1 startWith: anObject2 doFirst: anObject3 [
 	first := anObject3 value.
 	current := nil.
 	previous := nil.
-	edgesToAction := IdentityDictionary new.
-	objectsToTraverse := OrderedCollection with: start.
-	objectsTraversed := IdentitySet new
+	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection with: start. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
 ]
 
 { #category : #configuring }
 DeepTraverser >> on: anObject1 startWithout: anObject2 [
+	" traverse anObject and start at and do-not-include anObject2 "
 	self on: anObject1 startWith: anObject2 doFirst: nil
 ]
 
@@ -316,10 +319,12 @@ DeepTraverser >> upToEnd [
 
 { #category : #configuring }
 DeepTraverser >> with: anObject [
+	" traverse anObject and auto-select the start node - also include it "
 	self on: anObject startWith: [ anObject startUsing: self ]
 ]
 
 { #category : #configuring }
 DeepTraverser >> without: anObject [
+	" traverse anObject and auto-select the start node - but do not include it "
 	self on: anObject startWithout: [ anObject startUsing: self ]
 ]
