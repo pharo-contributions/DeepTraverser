@@ -1,6 +1,6 @@
 Extension { #name : #HashedCollection }
 
 { #category : #'*DeepTraverser-private' }
-HashedCollection >> startUsing: aStream [
+HashedCollection >> dtStartUsing: aStream [
 	^ self keys anyOne
 ]

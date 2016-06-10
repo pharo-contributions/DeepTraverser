@@ -320,11 +320,11 @@ DeepTraverser >> upToEnd [
 { #category : #configuring }
 DeepTraverser >> with: anObject [
 	" traverse anObject and auto-select the start node - also include it "
-	self on: anObject startWith: [ anObject startUsing: self ]
+	self on: anObject startWith: [ anObject dtStartUsing: self ]
 ]
 
 { #category : #configuring }
 DeepTraverser >> without: anObject [
 	" traverse anObject and auto-select the start node - but do not include it "
-	self on: anObject startWithout: [ anObject startUsing: self ]
+	self on: anObject startWithout: [ anObject dtStartUsing: self ]
 ]

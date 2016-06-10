@@ -12,5 +12,5 @@ Symbol >> from: fromObject to: toObject using: aStream [
 
 { #category : #'*DeepTraverser-private' }
 Symbol >> traverse: anObject using: aStream [
-	(anObject perform: self) traverseUsing: aStream
+	(anObject perform: self) dtTraverseUsing: aStream
 ]
