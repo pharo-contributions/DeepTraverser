@@ -7,80 +7,89 @@ Class {
 	#instVars : [
 		'traverser'
 	],
-	#category : #DeepTraverser
+	#category : #'DeepTraverser-Tests'
 }
 
 { #category : #running }
 DeepCustomTraverserTest >> setUp [
 	super setUp.
-	traverser := DeepTraverser withCustomTraversal: [ :each | graph at: each ifAbsent: [{ }] ]
+	traverser := DeepTraverser new 
+		onNodeTraverse: [ :each | graph at: each ifAbsent: [{ }] ];
+		yourself
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testCollectionsAreExpanded [
-	traverser traverse: 10.
+	traverser 
+		on: graph startWith: 10; 
+		run.
 	self 
-		assert: traverser traversedObjects 
+		assert: traverser objectsTraversed 
 		equals: {10 . 11} asSet
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testCycles [
-	traverser traverse: 1.
+	traverser 
+		on: graph startWith: 1; 
+		run.
 	self 
-		assert: traverser traversedObjects 
+		assert: traverser objectsTraversed 
 		equals: { 1 . 2 . 3} asSet
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testFirstObjectAction [
-	| objects action |
+	| objects |
 	objects := OrderedCollection new.
-	action := DeepCustomActionStrategy new 
-					objectAction: [ :each | objects add: each ].
-	traverser action: action.
-	traverser firstObjectAction: action.
-	traverser traverse: 0.
+	traverser 
+		onNodeAction: [ :each | objects add: each ];
+		on: graph startWith: 0; 
+		run.
 	self assert: objects size equals: 4.
 	self assert: objects equals: { 0. 1 . 2 . 3 } asOrderedCollection
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testNoCycle [
-	traverser traverse: 4.
+	traverser 
+		on: graph startWith: 4; 
+		run.
 	self 
-		assert: traverser traversedObjects 
+		assert: traverser objectsTraversed 
 		equals: {4 . 3} asSet
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testObjectAction [
-	| objects action |
+	| objects |
 	objects := OrderedCollection new.
-	action := DeepCustomActionStrategy new 
-					objectAction: [ :each | objects add: each ].
-	traverser action: action.
-	traverser traverse: 0.
+	traverser 
+		onNodeAction: [ :each | objects add: each ];
+		on: graph startWithout: 0; 
+		run.
 	self assert: objects size equals: 3.
 	self assert: objects equals: { 1 . 2 . 3 } asOrderedCollection
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testOriginIsPresentInResult [
-	traverser traverse: 0.
+	traverser 
+		on: graph startWith: 0; 
+		run.
 	self 
-		assert: traverser traversedObjects 
+		assert: traverser objectsTraversed 
 		equals: {0 . 1 . 2 . 3} asSet
 ]
 
 { #category : #tests }
 DeepCustomTraverserTest >> testRelationAction [
-	| relations action |
+	| relations |
 	relations := OrderedCollection new.
-	action := DeepCustomActionStrategy new 
-					relationAction: [:from :to | relations add: from->to ].
-	traverser action: action.
-	traverser traverse: 0.
+	traverser 
+		onEdgeAction: [ :from :to | relations add: from->to ];
+		on: graph startWith: 0; 
+		run.
 	self assert: relations size equals: 4.
 	self assert: relations equals: { 0->1 . 1->2 . 1->3 . 2->3 } asOrderedCollection
 ]

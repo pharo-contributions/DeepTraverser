@@ -1,149 +1,325 @@
-"
-The traverser has three responsibilities:
-1. traverse objects,
-2. mark traversed objects,
-3. trigger actions for each traversed object and each relation between two traversed objects
-
-1. is handled via  the DeepTraversal hierarchy
-2. is the responsibility of the traverse itself
-3. is handled by the DeepActionStrategy hierarchy
-"
 Class {
 	#name : #DeepTraverser,
 	#superclass : #Object,
 	#instVars : [
-		'traversed',
-		'traversal',
-		'action',
-		'firstObjectAction',
-		'toTraverse'
+		'object',
+		'onNodeAction',
+		'onEdgeAction',
+		'onNodeTraverse',
+		'objectsToTraverse',
+		'objectsTraversed',
+		'initializer',
+		'start',
+		'current',
+		'previous',
+		'first',
+		'edgesToAction'
 	],
 	#category : #DeepTraverser
 }
 
-{ #category : #'instance creation' }
-DeepTraverser class >> withCustomTraversal: aBlock [
-	"we provide a utility method for handling block traversals
-	given that this is likely to be the most common use case"
-	^ self new 
-		traversal: (DeepCustomTraversal with: aBlock)
-]
-
-{ #category : #private }
-DeepTraverser >> actOnFirstObject: anObject [
-	^ firstObjectAction executeOnObject: anObject
-]
-
-{ #category : #private }
-DeepTraverser >> actOnObject: anObject [
-	^ action executeOnObject: anObject
-]
-
-{ #category : #private }
-DeepTraverser >> actOnRelationFrom: originObject to: targetObject [
-	^ self action executeOnRelationFrom: originObject to: targetObject
-]
-
-{ #category : #accessing }
+{ #category : #deprecated }
 DeepTraverser >> action [
-	^ action
+	self deprecated: 'please use #onNodeAction instead'.
+	^ self onNodeAction
 ]
 
-{ #category : #accessing }
+{ #category : #deprecated }
 DeepTraverser >> action: anAction [
-	action := anAction
+	self deprecated: 'please use #onNodeAction: instead'.
+	self onNodeAction: anAction
+]
+
+{ #category : #testing }
+DeepTraverser >> atEnd [
+	^ self hasNext not
+]
+
+{ #category : #enumerating }
+DeepTraverser >> collect: aBlock [
+	^ self collect: aBlock as: OrderedCollection 
+]
+
+{ #category : #enumerating }
+DeepTraverser >> collect: aBlock as: aCollectionClass [
+	| newCollection |
+	newCollection := aCollectionClass new.
+	self do: [ :each |
+		newCollection add: (aBlock value: each) ].
+	^ newCollection
+]
+
+{ #category : #streaming }
+DeepTraverser >> current [
+	^ current
+]
+
+{ #category : #enumerating }
+DeepTraverser >> do: aBlock [
+	self reset.
+	[ self hasNext ] 
+		whileTrue: [ aBlock value: self next ]
 ]
 
 { #category : #private }
-DeepTraverser >> doTraverse: anObject [
-	"This method performs the actual traversal and markes the traversed objects.
-	It does not make use of recursion to limit problems related to the stack
-	when traversing large graphs.
-	The logic ignores collections and nil.
-	It uses two hooks for triggering custom behavior for each object,
-	and each relation between two objects."
-	| currentObject |
-
-	toTraverse := OrderedCollection with: anObject.
-
-	 [ toTraverse isEmpty ] whileFalse: [
-			currentObject := toTraverse removeFirst.
-			traversed add: currentObject.
-			self
-				objectsToTraverseWithoutCollectionsFrom: currentObject
-				do: [ :each | 
-					( self shouldTraverse: each ) ifTrue: [ 
-								toTraverse add: each.
-								self actOnObject: each ].
-					self actOnRelationFrom: currentObject to: each ] ] 
+DeepTraverser >> doNodeAction [
+	" the current action phase "
+	
+	" decide whether to apply action on the first node (or not) "
+	start == current ifTrue: [ start == first ifFalse: [ ^ self ] ].
+	
+	" handle the action for the current node "
+	onNodeAction action: current using: self.
+	
+	" handle the actions of postponed edge actions related to the current node "
+	(edgesToAction removeKey: current ifAbsent: [ #() ]) do: [ :assoc |
+		onEdgeAction from: assoc key to: assoc value using: self ]
+	
 ]
 
-{ #category : #accessing }
-DeepTraverser >> firstObjectAction [
-	^ firstObjectAction
+{ #category : #private }
+DeepTraverser >> doNodeTraverse [
+	" the current traversal phase "
+	
+	" always traverse a scheduled node "
+	onNodeTraverse traverse: current using: self.	
+
 ]
 
-{ #category : #accessing }
+{ #category : #deprecated }
 DeepTraverser >> firstObjectAction: anAction [
-	firstObjectAction := anAction
+	self deprecated: 'please use one of the #on:* methods'.
+	
 ]
 
-{ #category : #initialization }
-DeepTraverser >> initialize [ 
-	traversed := IdentitySet new.
-	toTraverse := OrderedCollection new. "the order of the objects to traverse matters"
-	action := DeepNullActionStrategy new.
-	firstObjectAction := DeepNullActionStrategy new
-]
-
-{ #category : #private }
-DeepTraverser >> objectsToTraverseFrom: anObject do: aBlock [	
-	^ self traversal objectsToTraverseFrom: anObject do: aBlock
+{ #category : #testing }
+DeepTraverser >> hasNext [
+	^ objectsToTraverse isEmptyOrNil not
 ]
 
 { #category : #private }
-DeepTraverser >> objectsToTraverseWithoutCollectionsFrom: anObject do: aBlock [
-	self objectsToTraverseFrom: anObject do: [ :eachObject |
-		eachObject isCollection 
-			ifTrue: [ 
-					"we ignore collections"
-					eachObject do: [ :each | 
-						aBlock value: each.
-						self 
-							objectsToTraverseWithoutCollectionsFrom: each 
-							do: aBlock ] ]
-			ifFalse: [ aBlock value: eachObject ] ]
+DeepTraverser >> isToTraverse: anObject [
+	" return true if anObject has not been scheduled/postponed for later traversal and action "
+	objectsToTraverse reverseDo: [ :each | 
+		each == anObject ifTrue: [ 
+			^ true ] ].
+	^ false
 ]
 
 { #category : #private }
-DeepTraverser >> shouldTraverse: anObject [
-	^ anObject notNil and: [
-		(traversed includes: anObject) not and: [
-			"we want to avoid marking objects toTraverse multiple
-			times before actually traversing them" 
-			(toTraverse includes: anObject) not ] ]
+DeepTraverser >> isTraversed: anObject [
+	" return true if anObject has already been traversed and action was performed "
+	^ objectsTraversed includes: anObject
+]
+
+{ #category : #streaming }
+DeepTraverser >> next [
+	previous := current.
+	current := objectsToTraverse removeFirst.
+	objectsTraversed add: current.
+	self doNodeTraverse.
+	self doNodeAction.
+	^ current
+]
+
+{ #category : #streaming }
+DeepTraverser >> next: anInteger [
+	| index newArray |
+	index := 0.
+	newArray := Array new: anInteger.
+	[ index < anInteger and: [ self hasNext ] ] whileTrue: [ 
+		newArray at: (index := index + 1) put: self next ].
+	^ newArray copyFrom: 1 to: index	
 ]
 
 { #category : #accessing }
-DeepTraverser >> traversal [
-	^ traversal
+DeepTraverser >> objectsTraversed [
+	^ objectsTraversed
 ]
 
-{ #category : #accessing }
-DeepTraverser >> traversal: aBlock [
-	traversal := aBlock
+{ #category : #configuring }
+DeepTraverser >> on: anObject [
+	self with: anObject
 ]
 
-{ #category : #'public interface' }
+{ #category : #configuring }
+DeepTraverser >> on: anObject1 startWith: anObject2 [
+	self on: anObject1 startWith: anObject2 doFirst: anObject2
+]
+
+{ #category : #configuring }
+DeepTraverser >> on: anObject1 startWith: anObject2 doFirst: anObject3 [
+	initializer := [ self on: anObject1 startWith: anObject2 doFirst: anObject3 ].
+	
+	" reset everything "
+	object := anObject1.
+	start := anObject2 value.
+	first := anObject3 value.
+	current := nil.
+	previous := nil.
+	edgesToAction := IdentityDictionary new.
+	objectsToTraverse := OrderedCollection with: start.
+	objectsTraversed := IdentitySet new
+]
+
+{ #category : #configuring }
+DeepTraverser >> on: anObject1 startWithout: anObject2 [
+	self on: anObject1 startWith: anObject2 doFirst: nil
+]
+
+{ #category : #configuring }
+DeepTraverser >> onEdgeAction [
+	^ onEdgeAction
+]
+
+{ #category : #configuring }
+DeepTraverser >> onEdgeAction: anObject [
+	onEdgeAction := anObject
+]
+
+{ #category : #configuring }
+DeepTraverser >> onNodeAction [
+	^ onNodeAction
+]
+
+{ #category : #configuring }
+DeepTraverser >> onNodeAction: anObject [
+	onNodeAction := anObject
+]
+
+{ #category : #configuring }
+DeepTraverser >> onNodeTraverse [
+	^ onNodeTraverse
+]
+
+{ #category : #configuring }
+DeepTraverser >> onNodeTraverse: anObject [
+	onNodeTraverse := anObject
+]
+
+{ #category : #streaming }
+DeepTraverser >> position [
+	^ objectsTraversed size
+]
+
+{ #category : #streaming }
+DeepTraverser >> previous [
+	^ previous
+]
+
+{ #category : #enumerating }
+DeepTraverser >> reject: aBlock [
+	^ self reject: aBlock as: OrderedCollection 
+]
+
+{ #category : #enumerating }
+DeepTraverser >> reject: aBlock as: aCollectionClass [
+	^ self select: [ :each | (aBlock value: each) not ] as: aCollectionClass
+]
+
+{ #category : #streaming }
+DeepTraverser >> reset [
+	initializer value
+]
+
+{ #category : #private }
+DeepTraverser >> run [
+	self reset.
+	[ self hasNext ] 
+		whileTrue: [ self next ]
+]
+
+{ #category : #enumerating }
+DeepTraverser >> select: aBlock [
+	^ self select: aBlock as: OrderedCollection 
+]
+
+{ #category : #enumerating }
+DeepTraverser >> select: aBlock as: aCollectionClass [
+	| newCollection |
+	newCollection := aCollectionClass new.
+	self do: [ :each |
+		(aBlock value: each) ifTrue: [ 
+			newCollection add: each ] ].
+	^ newCollection
+]
+
+{ #category : #private }
 DeepTraverser >> traverse: anObject [
-	"This is the main public method that
-	starts the traversal and associated logic"
-	self actOnFirstObject: anObject.
-	self doTraverse: anObject.
-	^ self traversedObjects
+	(self isTraversed: anObject) ifTrue: [ 
+		" this node has already been traversed, but the edge still needs to be handled in the following action-phase "
+		(edgesToAction at: current ifAbsentPut: [ OrderedCollection new ]) add: (current -> anObject).
+		^ self ].
+	
+	(self isToTraverse: anObject) ifTrue: [ 
+		" this node is already scheduled/postponed for traversal, we store the edge for later (traversal-phase + action-phase are still coming) "
+		(edgesToAction at: anObject ifAbsentPut: [ OrderedCollection new ]) add: (current -> anObject).
+		^ self ].
+	
+	" add this new node for the next traversal "
+	objectsToTraverse add: anObject.
+	
+	" schedule/postpone this new node for the following action-phase "
+	(edgesToAction at: anObject ifAbsentPut: [ OrderedCollection new ]) add: (current -> anObject).
+		
 ]
 
-{ #category : #accessing }
+{ #category : #deprecated }
 DeepTraverser >> traversedObjects [
-	^ traversed
+	self deprecated: 'please use #objectsTraversed instead'.
+	^ self objectsTraversed
+]
+
+{ #category : #deprecated }
+DeepTraverser >> traverser [
+	self deprecated: 'please use #onNodeTraverse instead'.
+	^ self onNodeTraverse
+]
+
+{ #category : #deprecated }
+DeepTraverser >> traverser: aBlock [
+	self deprecated: 'please use #onNodeTraverse: instead'.
+	self onNodeTraverse: aBlock
+]
+
+{ #category : #streaming }
+DeepTraverser >> upTo: anObject [
+	| newArray |
+	newArray := OrderedCollection new.
+	[ self hasNext and: [ (self next = anObject) not ] ] whileTrue: [ 
+		newArray add: current ].
+	^ newArray
+]
+
+{ #category : #streaming }
+DeepTraverser >> upToAny: aCollection [
+	^ self upToAnyMatching: [ :each | aCollection includes: each ]
+]
+
+{ #category : #streaming }
+DeepTraverser >> upToAnyMatching: aBlock [
+	| newArray |
+	newArray := OrderedCollection new.
+	[ self hasNext and: [ (aBlock value: self next) not ] ] whileTrue: [ 
+		newArray add: current ].
+	^ newArray
+]
+
+{ #category : #streaming }
+DeepTraverser >> upToEnd [
+	| newArray |
+	newArray := OrderedCollection new.
+	[ self hasNext ] whileTrue: [ 
+		newArray add: self next ].
+	^ newArray
+]
+
+{ #category : #configuring }
+DeepTraverser >> with: anObject [
+	self on: anObject startWith: [ anObject startUsing: self ]
+]
+
+{ #category : #configuring }
+DeepTraverser >> without: anObject [
+	self on: anObject startWithout: [ anObject startUsing: self ]
 ]
