@@ -160,6 +160,7 @@ DeepTraverser >> on: anObject1 startWith: anObject2 [
 
 { #category : #configuring }
 DeepTraverser >> on: anObject1 startWithout: anObject2 [
+	<todo: 'fix all traversals without the starting nodes: #start,#first,#startAction'>
 	" traverse anObject, start at anObject2 and include anObject3 "
 	initializer := [ self on: anObject1 startWithout: anObject2 ].
 	
@@ -342,11 +343,13 @@ DeepTraverser >> withAll: aCollection [
 
 { #category : #configuring }
 DeepTraverser >> without: anObject [
+	<todo: 'fix all traversals without the starting nodes: #start,#first,#startAction'>
 	self on: anObject startWithout: anObject
 ]
 
 { #category : #configuring }
 DeepTraverser >> withoutAll: aCollection [
+	<todo: 'fix all traversals without the starting nodes: #start,#first,#startAction'>
 	" traverse anObject, start at anObject2 and include anObject3 "
 	initializer := [ self withoutAll: aCollection ].
 	
