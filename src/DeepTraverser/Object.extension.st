@@ -194,12 +194,6 @@ Object >> deepCollectAsSet: aBlock [
 ]
 
 { #category : #'*DeepTraverser-private' }
-Object >> dtStartUsing: aStream [
-	<todo: 'refactor / remove from Object'>
-	^ self
-]
-
-{ #category : #'*DeepTraverser-private' }
 Object >> dtTraverseUsing: aStream [
 	<todo: 'refactor / remove from Object'>
 	aStream traverse: self
@@ -351,6 +345,15 @@ Object >> withDeepCollect: aTraversalBlock [
 	result := OrderedCollection new.
 	self withDeep: aTraversalBlock do: [ :each | result add: each ].
 	^ result
+]
+
+{ #category : #'*DeepTraverser' }
+Object >> withDeepCollect: aBlock as: aCollectionClass [
+
+	^ self 
+		withDeep: aBlock 
+		collect: [ :each | each ]
+		as: aCollectionClass
 ]
 
 { #category : #'*DeepTraverser' }

@@ -13,7 +13,8 @@ Class {
 		'current',
 		'previous',
 		'first',
-		'edgesToAction'
+		'edgesToAction',
+		'startAction'
 	],
 	#category : #DeepTraverser
 }
@@ -65,8 +66,8 @@ DeepTraverser >> do: aBlock [
 DeepTraverser >> doNodeAction [
 	" the current action phase "
 	
-	" decide whether to apply action on the first node (or not) "
-	start == current ifTrue: [ start == first ifFalse: [ ^ self ] ].
+	" decide whether to apply action on the first/initial nodes (or not) "
+	(startAction value: current) ifFalse: [ ^ self ].
 	
 	" handle the action for the current node "
 	onNodeAction action: current using: self.
@@ -144,58 +145,60 @@ DeepTraverser >> on: anObject [
 
 { #category : #configuring }
 DeepTraverser >> on: anObject1 startWith: anObject2 [
-	" traverse anObject and start at and include anObject2 "
-	self on: anObject1 startWith: anObject2 doFirst: anObject2
-]
-
-{ #category : #configuring }
-DeepTraverser >> on: anObject1 startWith: anObject2 doFirst: anObject3 [
 	" traverse anObject, start at anObject2 and include anObject3 "
-	initializer := [ self on: anObject1 startWith: anObject2 doFirst: anObject3 ].
+	initializer := [ self on: anObject1 startWith: anObject2 ].
 	
 	" reset everything "
 	object := anObject1.
-	start := anObject2 value.
-	first := anObject3 value.
+	startAction := [ :node | true ].
 	current := nil.
 	previous := nil.
 	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
-	objectsToTraverse := OrderedCollection with: start. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsToTraverse := OrderedCollection with: anObject2. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
 	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
 ]
 
 { #category : #configuring }
 DeepTraverser >> on: anObject1 startWithout: anObject2 [
-	" traverse anObject and start at and do-not-include anObject2 "
-	self on: anObject1 startWith: anObject2 doFirst: nil
+	" traverse anObject, start at anObject2 and include anObject3 "
+	initializer := [ self on: anObject1 startWithout: anObject2 ].
+	
+	" reset everything "
+	object := anObject1.
+	startAction := [ :node | (node == anObject2) not ].
+	current := nil.
+	previous := nil.
+	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection with: anObject2. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
 ]
 
-{ #category : #configuring }
+{ #category : #accessing }
 DeepTraverser >> onEdgeAction [
 	^ onEdgeAction
 ]
 
-{ #category : #configuring }
+{ #category : #accessing }
 DeepTraverser >> onEdgeAction: anObject [
 	onEdgeAction := anObject
 ]
 
-{ #category : #configuring }
+{ #category : #accessing }
 DeepTraverser >> onNodeAction [
 	^ onNodeAction
 ]
 
-{ #category : #configuring }
+{ #category : #accessing }
 DeepTraverser >> onNodeAction: anObject [
 	onNodeAction := anObject
 ]
 
-{ #category : #configuring }
+{ #category : #accessing }
 DeepTraverser >> onNodeTraverse [
 	^ onNodeTraverse
 ]
 
-{ #category : #configuring }
+{ #category : #accessing }
 DeepTraverser >> onNodeTraverse: anObject [
 	onNodeTraverse := anObject
 ]
@@ -319,12 +322,40 @@ DeepTraverser >> upToEnd [
 
 { #category : #configuring }
 DeepTraverser >> with: anObject [
-	" traverse anObject and auto-select the start node - also include it "
-	self on: anObject startWith: [ anObject dtStartUsing: self ]
+	self on: anObject startWith: anObject
+]
+
+{ #category : #configuring }
+DeepTraverser >> withAll: aCollection [
+	" traverse anObject, start at anObject2 and include anObject3 "
+	initializer := [ self withAll: aCollection ].
+	
+	" reset everything "
+	object := aCollection.
+	startAction := [ :node | true ].
+	current := nil.
+	previous := nil.
+	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection withAll: aCollection. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
 ]
 
 { #category : #configuring }
 DeepTraverser >> without: anObject [
-	" traverse anObject and auto-select the start node - but do not include it "
-	self on: anObject startWithout: [ anObject dtStartUsing: self ]
+	self on: anObject startWithout: anObject
+]
+
+{ #category : #configuring }
+DeepTraverser >> withoutAll: aCollection [
+	" traverse anObject, start at anObject2 and include anObject3 "
+	initializer := [ self withoutAll: aCollection ].
+	
+	" reset everything "
+	object := aCollection.
+	startAction := [ :node | (aCollection includes: node) not ].
+	current := nil.
+	previous := nil.
+	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection withAll: aCollection. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
 ]

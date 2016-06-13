@@ -1,51 +1,51 @@
-Extension { #name : #HashedCollection }
+Extension { #name : #SequenceableCollection }
 
 { #category : #'*DeepTraverser' }
-HashedCollection >> deep: aTraversalBlock do: anObjectActionBlock [
+SequenceableCollection >> deep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
-		on: self startWithout: self keys anyOne;
+		withoutAll: self;
 		yourself) run
 ]
 
 { #category : #'*DeepTraverser' }
-HashedCollection >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+SequenceableCollection >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
 	" wie cannot traverse this graph without all items of self - so we include them "
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		onEdgeAction: aRelationBlock;
-		on: self startWithout: self keys anyOne;
+		withoutAll: self;
 		yourself) run
 ]
 
 { #category : #'*DeepTraverser' }
-HashedCollection >> deep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
+SequenceableCollection >> deep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 	" wie cannot traverse this graph without all items of self - so we include them "
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onEdgeAction: anObjectEdgeActionBlock;
-		on: self startWithout: self keys anyOne;
+		withoutAll: self;
 		yourself) run
 ]
 
 { #category : #'*DeepTraverser' }
-HashedCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
+SequenceableCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
 	" wie cannot traverse this graph without all items of self - so we include them "
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
-		on: self startWith: self keys anyOne;
+		withAll: self;
 		yourself) run
 ]
 
 { #category : #'*DeepTraverser' }
-HashedCollection >> withDeep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
+SequenceableCollection >> withDeep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onEdgeAction: anObjectEdgeActionBlock;
-		on: self startWith: self keys anyOne;
+		withAll: self;
 		yourself) run
 ]
