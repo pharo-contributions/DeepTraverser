@@ -41,6 +41,16 @@ SequenceableCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
 ]
 
 { #category : #'*DeepTraverser' }
+SequenceableCollection >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	(DeepTraverser new 
+		onNodeTraverse: aTraversalBlock;
+		onNodeAction: anObjectActionBlock;
+		onEdgeAction: aRelationBlock;
+		withAll: self;
+		yourself) run
+]
+
+{ #category : #'*DeepTraverser' }
 SequenceableCollection >> withDeep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 
 	(DeepTraverser new 

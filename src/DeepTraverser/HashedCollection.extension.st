@@ -41,6 +41,16 @@ HashedCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
 ]
 
 { #category : #'*DeepTraverser' }
+HashedCollection >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlock [
+	(DeepTraverser new 
+		onNodeTraverse: aTraversalBlock;
+		onNodeAction: anObjectActionBlock;
+		onEdgeAction: aRelationBlock;
+		on: self startWith: self keys anyOne;
+		yourself) run
+]
+
+{ #category : #'*DeepTraverser' }
 HashedCollection >> withDeep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 
 	(DeepTraverser new 
