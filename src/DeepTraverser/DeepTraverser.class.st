@@ -9,12 +9,14 @@ Class {
 		'objectsToTraverse',
 		'objectsTraversed',
 		'initializer',
-		'start',
 		'current',
 		'previous',
-		'first',
 		'edgesToAction',
-		'startAction'
+		'startAction',
+		'startObject',
+		'onPickNextAction',
+		'isActionAppliedOnCurrent',
+		'expectedSize'
 	],
 	#category : #DeepTraverser
 }
@@ -67,7 +69,7 @@ DeepTraverser >> doNodeAction [
 	" the current action phase "
 	
 	" decide whether to apply action on the first/initial nodes (or not) "
-	(startAction value: current) ifFalse: [ ^ self ].
+	isActionAppliedOnCurrent ifFalse: [ ^ self ].
 	
 	" handle the action for the current node "
 	onNodeAction action: current using: self.
@@ -85,6 +87,16 @@ DeepTraverser >> doNodeTraverse [
 	" always traverse a scheduled node "
 	onNodeTraverse traverse: current using: self.	
 
+]
+
+{ #category : #accessing }
+DeepTraverser >> expectedSize [
+	^ expectedSize ifNil: [ expectedSize := 100 ]
+]
+
+{ #category : #accessing }
+DeepTraverser >> expectedSize: anNumber [
+	expectedSize := expectedSize
 ]
 
 { #category : #deprecated }
@@ -116,7 +128,7 @@ DeepTraverser >> isTraversed: anObject [
 { #category : #streaming }
 DeepTraverser >> next [
 	previous := current.
-	current := objectsToTraverse removeFirst.
+	onPickNextAction value.
 	objectsTraversed add: current.
 	self doNodeTraverse.
 	self doNodeAction.
@@ -150,12 +162,14 @@ DeepTraverser >> on: anObject1 startWith: anObject2 [
 	
 	" reset everything "
 	object := anObject1.
-	startAction := [ :node | true ].
+	startObject := anObject2.
+	onPickNextAction := [ current := objectsToTraverse removeFirst ].
+	isActionAppliedOnCurrent := true.
 	current := nil.
 	previous := nil.
-	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
-	objectsToTraverse := OrderedCollection with: anObject2. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
+	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection with: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
 ]
 
 { #category : #configuring }
@@ -166,12 +180,18 @@ DeepTraverser >> on: anObject1 startWithout: anObject2 [
 	
 	" reset everything "
 	object := anObject1.
-	startAction := [ :node | (node == anObject2) not ].
+	startObject := anObject2.
+	onPickNextAction := [ 
+		current := objectsToTraverse removeFirst.
+		isActionAppliedOnCurrent notNil
+			ifTrue: [ isActionAppliedOnCurrent := true. onPickNextAction := [ current := objectsToTraverse removeFirst ] ]
+			ifFalse: [ isActionAppliedOnCurrent := false ] ].
+	isActionAppliedOnCurrent := nil.
 	current := nil.
 	previous := nil.
-	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
-	objectsToTraverse := OrderedCollection with: anObject2. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
+	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection with: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
 ]
 
 { #category : #accessing }
@@ -263,7 +283,7 @@ DeepTraverser >> traverse: anObject [
 		(edgesToAction at: anObject ifAbsentPut: [ OrderedCollection new ]) add: (current -> anObject).
 		^ self ].
 	
-	" add this new node for the next traversal "
+	" add this new node for the next traversal. adding must be at the end of the collection otherwise onPickNextAction/isActionAppliedOnCurrent will be corrupt "
 	objectsToTraverse add: anObject.
 	
 	" schedule/postpone this new node for the following action-phase "
@@ -333,12 +353,15 @@ DeepTraverser >> withAll: aCollection [
 	
 	" reset everything "
 	object := aCollection.
-	startAction := [ :node | true ].
+	
+	startObject := aCollection copy.
+	onPickNextAction := [ current := objectsToTraverse removeFirst ].
+	isActionAppliedOnCurrent := true.
 	current := nil.
 	previous := nil.
-	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
-	objectsToTraverse := OrderedCollection withAll: aCollection. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
+	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
 ]
 
 { #category : #configuring }
@@ -354,11 +377,17 @@ DeepTraverser >> withoutAll: aCollection [
 	initializer := [ self withoutAll: aCollection ].
 	
 	" reset everything "
-	object := aCollection.
-	startAction := [ :node | (aCollection includes: node) not ].
+	object := aCollection asOrderedCollection.
+	startObject := aCollection asOrderedCollection.
+	onPickNextAction := [ 
+		current := objectsToTraverse removeFirst.
+		startObject isEmpty
+			ifTrue: [ isActionAppliedOnCurrent := true. onPickNextAction := [ current := objectsToTraverse removeFirst ] ]
+			ifFalse: [ isActionAppliedOnCurrent := false. startObject removeFirst. ] ].
+	isActionAppliedOnCurrent := nil.
 	current := nil.
 	previous := nil.
-	edgesToAction := IdentityDictionary new. " track edges until they are allowed to be consumed "
-	objectsToTraverse := OrderedCollection withAll: aCollection. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new " traversal phase 1 check / quick check, slow add"
+	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
+	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
 ]
