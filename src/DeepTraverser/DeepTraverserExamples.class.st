@@ -248,8 +248,203 @@ DeepTraverserExamples >> graph4 [
 ]
 
 { #category : #utils }
+DeepTraverserExamples >> graph5 [
+	<gtExample>
+	^ Dictionary new
+		at: $a put: #( $b $c $d );
+		at: $b put: #( $e $f );
+		at: $c put: #( $g $f );
+		at: $g put: #( $f );
+		at: $d put: #( $h $i );
+		at: $f put: #( $j $k );
+		at: $k put: #( $b $c );
+		yourself
+]
+
+{ #category : #utils }
 DeepTraverserExamples >> nextElementsFor: each inGraph: graph [
 	^ graph at: each ifAbsent: [ #() ]
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingAtEnd: traverser [
+	<gtExample>
+	<depends: #streamingNext:>
+	<raises: #CollectionIsEmpty>
+	
+	self assert: traverser hasNext not.
+	self assert: traverser current isNil not.
+	self assert: traverser current = $k.
+	self assert: traverser atEnd.
+	
+	traverser next " oups "
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingNext: traverser [
+	<gtExample>
+	<depends: #streamingTraverser:>
+	
+	self assert: traverser hasNext.
+	self assert: traverser current isNil.
+	self assert: traverser position = 0.
+	
+	self assert: traverser next = $a.
+	self assert: traverser current = $a.
+	self assert: traverser previous isNil.
+	self assert: traverser position = 1.
+	
+	self assert: traverser next = $b.	
+	self assert: traverser current = $b.
+	self assert: traverser previous = $a.
+	self assert: traverser position = 2.
+		
+	self assert: traverser next = $c.
+	self assert: traverser next = $d.
+	self assert: traverser next = $e.
+	self assert: traverser next = $f.
+	self assert: traverser next = $g.
+	self assert: traverser next = $h.
+	self assert: traverser next = $i.
+	self assert: traverser next = $j.
+	self assert: traverser next = $k.
+	
+	self assert: traverser atEnd.
+	
+	^ traverser
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingNextElements: traverser [
+	<gtExample>
+	<depends: #streamingTraverser:>
+	
+	self assert: traverser hasNext.
+	self assert: traverser current isNil.
+	self assert: traverser position = 0.
+	self assert: traverser atEnd not.
+	
+	self assert: (traverser next: 1) = { $a }.
+	self assert: traverser atEnd not.
+	
+	self assert: (traverser next: 3) = { $b. $c. $d }.
+	self assert: traverser atEnd not.
+	
+	self assert: (traverser next: 4) = { $e. $f. $g. $h }.
+	self assert: traverser atEnd not.
+	
+	self assert: (traverser next: 100) = { $i. $j. $k. }.
+	self assert: traverser atEnd.
+	
+	self assert: (traverser next: 100) = {}.
+	self assert: traverser atEnd.
+	
+	self assert: (traverser next: 100) = {}.
+	self assert: traverser atEnd.
+	
+	^ traverser
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingRestart: traverser [
+	<gtExample>
+	<depends: #streamingNext:>
+	
+	traverser reset.
+	
+	self assert: traverser hasNext.
+	self assert: traverser current isNil.
+	self assert: traverser position = 0.
+	
+	self assert: traverser atEnd not.
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingTraverser: graph [
+	<gtExample>
+	<depends: #graph5>
+	^ DeepTraverserWithoutAction new 
+		on: graph startWith: $a;
+		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
+		yourself
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingUpToAnyExistingElement: traverser [
+	<gtExample>
+	<depends: #streamingUpToExistingElement:>
+	
+	| result |
+
+	result := traverser upToAny: { $k. $i }.
+	self assert: result asArray = { $g. $h }.
+	self assert: traverser atEnd not.
+	
+	result := traverser upToAny: { $z. $y. $k }.
+	self assert: result asArray = { $j }.
+	
+	self assert: traverser current = $k.
+	self assert: traverser atEnd.
+	
+	^ traverser
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingUpToAnyMatching: traverser [
+	<gtExample>
+	<depends: #streamingTraverser:>
+	
+	| result |
+	result := traverser upToAnyMatching: [ :node | node = $c ].
+	self assert: result asArray = { $a. $b }.
+	self assert: traverser current = $c.
+	
+	result := traverser upToAnyMatching: [ :node | node asInteger > 102 and: [ node asInteger < 105 ] ].
+	self assert: result asArray = { $d. $e. $f. }.
+	
+	^ traverser
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingUpToEnd: traverser [
+	<gtExample>
+	<depends: #streamingTraverser:>
+	
+	| result |
+	result := traverser upToEnd.
+	self assert: result asArray = { $a. $b. $c. $d. $e. $f. $g. $h. $i. $j. $k }.
+	self assert: traverser atEnd.
+	
+	^ traverser
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingUpToExistingElement: traverser [
+	<gtExample>
+	<depends: #streamingTraverser:>
+	
+	| result |
+	self assert: (traverser next: 2) = { $a. $b }.
+	
+	result := traverser upTo: $f.
+	self assert: result asArray = { $c. $d. $e }.
+	self assert: traverser current = $f.
+	
+	^ traverser
+]
+
+{ #category : #'examples-streaming' }
+DeepTraverserExamples >> streamingUpToNonExistingElement: traverser [
+	<gtExample>
+	<depends: #streamingUpToExistingElement:>
+	
+	| result |
+
+	result := traverser upTo: $b.
+	self assert: result asArray = { $g. $h. $i. $j. $k }.
+	self assert: traverser atEnd.
+	
+	^ traverser
 ]
 
 { #category : #'examples-relations' }
