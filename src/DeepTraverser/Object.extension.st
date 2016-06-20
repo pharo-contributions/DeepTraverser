@@ -46,7 +46,7 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 		deep: #subclasses 
 		do: [:each | Transcript show: each; cr]"
 	
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		without: self;
@@ -227,7 +227,7 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
 		withDeep: #subclasses 
 		do: [:each | Transcript show: each; cr ]"
 
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		with: self;

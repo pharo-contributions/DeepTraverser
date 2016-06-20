@@ -2,7 +2,7 @@ Extension { #name : #SequenceableCollection }
 
 { #category : #'*DeepTraverser' }
 SequenceableCollection >> deep: aTraversalBlock do: anObjectActionBlock [
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		withoutAll: self;
@@ -33,7 +33,7 @@ SequenceableCollection >> deep: aTraversalBlock relationDo: anObjectEdgeActionBl
 { #category : #'*DeepTraverser' }
 SequenceableCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
 	" wie cannot traverse this graph without all items of self - so we include them "
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		withAll: self;

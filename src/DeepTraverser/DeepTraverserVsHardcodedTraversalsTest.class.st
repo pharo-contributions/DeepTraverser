@@ -1,6 +1,6 @@
 Class {
 	#name : #DeepTraverserVsHardcodedTraversalsTest,
-	#superclass : #DeepTraverserTest,
+	#superclass : #TestCase,
 	#category : #'DeepTraverser-Tests'
 }
 

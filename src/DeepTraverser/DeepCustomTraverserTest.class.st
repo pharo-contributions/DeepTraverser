@@ -3,7 +3,7 @@ This is a test class for testing the behavior of DeepTraverser
 "
 Class {
 	#name : #DeepCustomTraverserTest,
-	#superclass : #DeepTraverserTest,
+	#superclass : #DeepTraverserGraphTest,
 	#instVars : [
 		'traverser'
 	],
@@ -13,6 +13,7 @@ Class {
 { #category : #running }
 DeepCustomTraverserTest >> setUp [
 	super setUp.
+	
 	traverser := DeepTraverser new 
 		onNodeTraverse: [ :each | graph at: each ifAbsent: [{ }] ];
 		yourself

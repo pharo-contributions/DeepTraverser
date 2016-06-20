@@ -1,6 +1,9 @@
 Class {
 	#name : #DeepTreeGraphTraverserTest,
-	#superclass : #DeepTraverserTest,
+	#superclass : #DeepTraverserGraphTest,
+	#instVars : [
+		'tree'
+	],
 	#category : #'DeepTraverser-Tests'
 }
 
@@ -19,8 +22,15 @@ DeepTreeGraphTraverserTest >> assert: aResult graph: aDictionary iterator: aClas
 ]
 
 { #category : #private }
-DeepTreeGraphTraverserTest >> graph [
-	^ Dictionary new
+DeepTreeGraphTraverserTest >> nextTreeElementsFrom: each [
+	^ tree at: each ifAbsent: [ #() ]
+]
+
+{ #category : #running }
+DeepTreeGraphTraverserTest >> setUp [
+	super setUp.
+	
+	graph := Dictionary new
 		at: $a put: #( $b $c $d );
 		at: $b put: #( $e $f );
 		at: $c put: #( $g $f );
@@ -28,6 +38,14 @@ DeepTreeGraphTraverserTest >> graph [
 		at: $d put: #( $h $i );
 		at: $f put: #( $j $k );
 		at: $k put: #( $b $c );
+		yourself.
+		
+	tree := Dictionary new
+		at: $a put: #( $b $c $d );
+		at: $b put: #( $e $f );
+		at: $c put: #( $g );
+		at: $d put: #( $h $i );
+		at: $f put: #( $j $k );
 		yourself
 ]
 
@@ -68,21 +86,21 @@ DeepTreeGraphTraverserTest >> testAllSubclasses [
 { #category : #tests }
 DeepTreeGraphTraverserTest >> testBreadthFirstGraphIterator [
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) 
-		graph: self graph 
-		iterator: DeepTraverser
+		graph: graph 
+		iterator: DeepTraverserWithoutEdges
 		start: $a.
 	
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) = ($a
-		withDeep: [ :item | self graph at: item ifAbsent: [ #() ] ]
+		withDeep: [ :item | self nextGraphElementsFrom: item ]
 		collect: [ :item | item ]) asArray.
 		
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) 
-		graph: self tree 
-		iterator: DeepTraverser
+		graph: tree 
+		iterator: DeepTraverserWithoutEdges
 		start: $a.
 	
 	self assert: #( $a $b $c $d $e $f $g $h $i $j $k ) = ($a
-		withDeep: [ :item | self tree at: item ifAbsent: [ #() ] ]
+		withDeep: [ :item | self nextTreeElementsFrom: item ]
 		collect: [ :item | item ]) asArray.
 	
 ]
@@ -109,9 +127,9 @@ DeepTreeGraphTraverserTest >> testCollectionStart [
 { #category : #tests }
 DeepTreeGraphTraverserTest >> testStreaming [
 	| iterator performed |
-	iterator := DeepTraverser new 
+	iterator := DeepTraverserWithoutEdges new 
 		on: graph startWith: $a;
-		onNodeTraverse: [ :item | self graph at: item ifAbsent: [ #() ] ];
+		onNodeTraverse: [ :item | self nextGraphElementsFrom: item ];
 		onNodeAction: [ :item | performed := item ];
 		yourself.
  
@@ -130,9 +148,9 @@ DeepTreeGraphTraverserTest >> testStreaming [
 { #category : #tests }
 DeepTreeGraphTraverserTest >> testStreamingNext [
 	| iterator performed |
-	iterator := DeepTraverser new 
+	iterator := DeepTraverserWithoutEdges new 
 		on: graph startWith: $a;
-		onNodeTraverse: [ :item | self graph at: item ifAbsent: [ #() ] ];
+		onNodeTraverse: [ :item | self nextGraphElementsFrom: item ];
 		onNodeAction: [ :item | performed := item ];
 		yourself.
 
@@ -156,9 +174,9 @@ DeepTreeGraphTraverserTest >> testStreamingNext [
 { #category : #tests }
 DeepTreeGraphTraverserTest >> testStreamingNextProcessed [
 	| iterator performed |
-	iterator := DeepTraverser new 
+	iterator := DeepTraverserWithoutEdges new 
 		on: graph startWith: $a;
-		onNodeTraverse: [ :item | self graph at: item ifAbsent: [ #() ] ];
+		onNodeTraverse: [ :item | self nextGraphElementsFrom: item ];
 		onNodeAction: [ :item | performed := item ];
 		yourself.
 
@@ -210,15 +228,4 @@ DeepTreeGraphTraverserTest >> testWithAllSubclasses [
 	self shouldnt: [ raw := Number withAllSubclasses ] raise: Error.
 	self shouldnt: [ stream := Number withDeepCollect: #subclasses ] raise: Error.
 	self assert: raw asSet = stream asSet
-]
-
-{ #category : #private }
-DeepTreeGraphTraverserTest >> tree [
-	^ Dictionary new
-		at: $a put: #( $b $c $d );
-		at: $b put: #( $e $f );
-		at: $c put: #( $g );
-		at: $d put: #( $h $i );
-		at: $f put: #( $j $k );
-		yourself
 ]

@@ -1,11 +1,13 @@
 Class {
 	#name : #DeepGraph1TraverserTest,
-	#superclass : #DeepTraverserTest,
+	#superclass : #DeepTraverserGraphTest,
 	#category : #'DeepTraverser-Tests'
 }
 
 { #category : #running }
 DeepGraph1TraverserTest >> setUp [
+	super setUp.
+	
 	graph := Dictionary new.
 	graph at: 0 put: { 4. 1 }.
 	graph at: 1 put: { 4. 2 }.

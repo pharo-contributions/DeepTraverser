@@ -2,7 +2,7 @@ Extension { #name : #HashedCollection }
 
 { #category : #'*DeepTraverser' }
 HashedCollection >> deep: aTraversalBlock do: anObjectActionBlock [
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		on: self startWithout: self keys anyOne;
@@ -33,7 +33,7 @@ HashedCollection >> deep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 { #category : #'*DeepTraverser' }
 HashedCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
 	" wie cannot traverse this graph without all items of self - so we include them "
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		on: self startWith: self keys anyOne;

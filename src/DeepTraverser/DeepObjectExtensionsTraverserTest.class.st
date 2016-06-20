@@ -3,7 +3,7 @@ Tests the Object extensions related to the traverser
 "
 Class {
 	#name : #DeepObjectExtensionsTraverserTest,
-	#superclass : #DeepTraverserTest,
+	#superclass : #DeepTraverserGraphTest,
 	#category : #'DeepTraverser-Tests'
 }
 
@@ -77,7 +77,7 @@ DeepObjectExtensionsTraverserTest >> testDeepDoDifferencesInDeclaration [
 	
 	expectedTrace := #( 0 1 2 3 ) asOrderedCollection.
 	trace := OrderedCollection new.
-	(DeepTraverser new 
+	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: [ :each | self nextGraphElementsFrom: each ];
 		onNodeAction: [ :each | trace add: each ];
 		on: graph startWith: 0;
