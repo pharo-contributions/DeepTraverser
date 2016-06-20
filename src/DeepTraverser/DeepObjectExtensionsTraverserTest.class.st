@@ -4,7 +4,7 @@ Tests the Object extensions related to the traverser
 Class {
 	#name : #DeepObjectExtensionsTraverserTest,
 	#superclass : #DeepTraverserGraphTest,
-	#category : #'DeepTraverser-Tests'
+	#category : #'DeepTraverser-Tests-Transformed-To-Examples'
 }
 
 { #category : #tests }
