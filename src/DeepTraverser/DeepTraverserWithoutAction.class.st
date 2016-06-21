@@ -15,6 +15,11 @@ Class {
 	#category : #DeepTraverser
 }
 
+{ #category : #'as yet unclassified' }
+DeepTraverserWithoutAction class >> gtExamplesProvider [ 
+	^ DeepTraverserExamples new
+]
+
 { #category : #testing }
 DeepTraverserWithoutAction >> atEnd [
 	^ self hasNext not
