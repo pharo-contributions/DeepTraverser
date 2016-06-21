@@ -5,7 +5,7 @@ SequenceableCollection >> deep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
-		withoutAll: self;
+		on: self startWithoutAll: self;
 		yourself) run
 ]
 
@@ -16,7 +16,7 @@ SequenceableCollection >> deep: aTraversalBlock do: anObjectActionBlock relation
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		onEdgeAction: aRelationBlock;
-		withoutAll: self;
+		on: self startWithoutAll: self;
 		yourself) run
 ]
 
@@ -26,7 +26,7 @@ SequenceableCollection >> deep: aTraversalBlock relationDo: anObjectEdgeActionBl
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onEdgeAction: anObjectEdgeActionBlock;
-		withoutAll: self;
+		on: self startWithoutAll: self;
 		yourself) run
 ]
 
@@ -36,7 +36,7 @@ SequenceableCollection >> withDeep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
-		withAll: self;
+		on: self startWithAll: self;
 		yourself) run
 ]
 
@@ -46,7 +46,7 @@ SequenceableCollection >> withDeep: aTraversalBlock do: anObjectActionBlock rela
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		onEdgeAction: aRelationBlock;
-		withAll: self;
+		on: self startWithAll: self;
 		yourself) run
 ]
 
@@ -56,6 +56,6 @@ SequenceableCollection >> withDeep: aTraversalBlock relationDo: anObjectEdgeActi
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onEdgeAction: anObjectEdgeActionBlock;
-		withAll: self;
+		on: self startWithAll: self;
 		yourself) run
 ]

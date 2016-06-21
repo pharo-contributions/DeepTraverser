@@ -47,12 +47,26 @@ DeepTraverserWithoutAction >> do: aBlock [
 ]
 
 { #category : #private }
+DeepTraverserWithoutAction >> doNodeAction [
+]
+
+{ #category : #private }
 DeepTraverserWithoutAction >> doNodeTraverse [
 	" the current traversal phase "
 	
 	" always traverse a scheduled node "
 	onNodeTraverse traverse: current using: self.	
 
+]
+
+{ #category : #streaming }
+DeepTraverserWithoutAction >> doPickCurrentNode [
+	current := objectsToTraverse removeFirst
+]
+
+{ #category : #private }
+DeepTraverserWithoutAction >> doPickNextNode [
+	current := objectsToTraverse removeFirst
 ]
 
 { #category : #accessing }
@@ -88,9 +102,10 @@ DeepTraverserWithoutAction >> isTraversed: anObject [
 { #category : #streaming }
 DeepTraverserWithoutAction >> next [
 	previous := current.
-	current := objectsToTraverse removeFirst.
+	self doPickNextNode.
 	objectsTraversed add: current.
 	self doNodeTraverse.
+	self doNodeAction.
 	^ current
 ]
 
@@ -112,7 +127,7 @@ DeepTraverserWithoutAction >> objectsTraversed [
 { #category : #configuring }
 DeepTraverserWithoutAction >> on: anObject [
 	" traverse anObject. start traversal using anObject and apply the action on all objects "
-	self with: anObject
+	self on: self startWith: anObject
 ]
 
 { #category : #configuring }
@@ -288,45 +303,4 @@ DeepTraverserWithoutAction >> upToEnd [
 	[ self hasNext ] whileTrue: [ 
 		newArray add: self next ].
 	^ newArray
-]
-
-{ #category : #configuring }
-DeepTraverserWithoutAction >> with: anObject [
-	" traverse anObject. start traversal using anObject and apply the action on all objects "
-	self on: anObject startWith: anObject
-]
-
-{ #category : #configuring }
-DeepTraverserWithoutAction >> withAll: aCollection [
-	" traverse aCollection. start traversal using aCollection and apply action on all objects "
-	initializer := [ self withAll: aCollection ].
-	
-	" reset everything "
-	object := aCollection.
-	
-	startObject := aCollection copy.
-	current := nil.
-	previous := nil.
-	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
-]
-
-{ #category : #configuring }
-DeepTraverserWithoutAction >> without: anObject [
-	" traverse anObject. start traversal using anObject but do not apply action anObject "
-	self on: anObject startWithout: anObject
-]
-
-{ #category : #configuring }
-DeepTraverserWithoutAction >> withoutAll: aCollection [
-	" traverse aCollection. start traversal using aCollection but do not apply action on items of aCollection "
-	initializer := [ self withoutAll: aCollection ].
-	
-	" reset everything "
-	object := aCollection asOrderedCollection.
-	startObject := aCollection asOrderedCollection.
-	current := nil.
-	previous := nil.
-	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
 ]

@@ -49,7 +49,7 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
-		without: self;
+		on: self startWithout: self;
 		yourself) run
 ]
 
@@ -74,7 +74,7 @@ Object >> deep: aTraversalBlock do: anObjectActionBlock relationDo: aRelationBlo
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		onEdgeAction: aRelationBlock;
-		without: self;
+		on: self startWithout: self;
 		yourself) run
 ]
 
@@ -127,7 +127,7 @@ Object >> deep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onEdgeAction: anObjectEdgeActionBlock;
-		without: self;
+		on: self startWithout: self;
 		yourself) run
 ]
 
@@ -230,7 +230,7 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock [
 	(DeepTraverserWithoutEdges new 
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
-		with: self;
+		on: self startWith: self;
 		yourself) run
 ]
 
@@ -256,7 +256,7 @@ Object >> withDeep: aTraversalBlock do: anObjectActionBlock relationDo: aRelatio
 		onNodeTraverse: aTraversalBlock;
 		onNodeAction: anObjectActionBlock;
 		onEdgeAction: aRelationBlock;
-		with: self;
+		on: self startWith: self;
 		yourself) run
 ]
 
@@ -309,7 +309,7 @@ Object >> withDeep: aTraversalBlock relationDo: anObjectEdgeActionBlock [
 	(DeepTraverser new 
 		onNodeTraverse: aTraversalBlock;
 		onEdgeAction: anObjectEdgeActionBlock;
-		with: self;
+		on: self startWith: self;
 		yourself) run
 ]
 

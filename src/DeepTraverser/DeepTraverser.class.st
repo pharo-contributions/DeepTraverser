@@ -46,6 +46,14 @@ DeepTraverser >> on: anObject1 startWithout: anObject2 [
 
 ]
 
+{ #category : #configuring }
+DeepTraverser >> on: anObect startWithoutAll: aCollection [
+	super on: anObect startWithoutAll: aCollection.
+
+	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
+
+]
+
 { #category : #accessing }
 DeepTraverser >> onEdgeAction [
 	^ onEdgeAction
@@ -74,19 +82,4 @@ DeepTraverser >> traverse: anObject [
 	" schedule/postpone this new node for the following action-phase "
 	(edgesToAction at: anObject ifAbsentPut: [ OrderedCollection new ]) add: (current -> anObject).
 		
-]
-
-{ #category : #configuring }
-DeepTraverser >> withAll: aCollection [
-	super withAll: aCollection.
-	
-	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
-]
-
-{ #category : #configuring }
-DeepTraverser >> withoutAll: aCollection [
-	super withoutAll: aCollection.
-	
-	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
-
 ]
