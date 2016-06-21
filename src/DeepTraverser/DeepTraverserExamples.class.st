@@ -14,6 +14,96 @@ DeepTraverserExamples class >> gtExamplesSource [
 	^ DeepTraverser
 ]
 
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> allMethodsArray [
+	<gtExample>
+	| resultByRaw resultByTraverser |
+	
+	resultByRaw := Array allSubclasses 
+			flatCollect: [ :each | each methods ].
+			
+	resultByTraverser := Array
+			deep: #subclasses 
+			flatCollect: [ :each | each methods ].
+	
+	self assert: resultByRaw size = resultByTraverser size.
+	self assert: resultByRaw asSet = resultByTraverser asSet.
+	
+]
+
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> allMethodsObject [
+	<gtExample>
+	| resultByRaw resultByTraverser |
+	
+	resultByRaw := Object allSubclasses 
+			flatCollect: [ :each | each methods ].
+			
+	resultByTraverser := Object
+			deep: #subclasses 
+			flatCollect: [ :each | each methods ].
+	
+	self assert: resultByRaw size = resultByTraverser size.
+	self assert: resultByRaw asSet = resultByTraverser asSet.
+	
+]
+
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> allSuperclassesNumber [
+	<gtExample>
+	| resultByRaw resultByTraverser |
+	resultByRaw := Number allSuperclasses.
+	resultByTraverser := Number deepCollect: #superclass.
+	
+	self assert: resultByRaw size = resultByTraverser size.
+	self assert: resultByRaw asSet = resultByTraverser asSet.
+	
+]
+
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> allSuperclassesObject [
+	<gtExample>
+	| resultByRaw resultByTraverser |
+	resultByRaw := Object allSuperclasses.
+	resultByTraverser := Object deepCollect: #superclass.
+	
+	self assert: resultByRaw size = resultByTraverser size.
+	self assert: resultByRaw asSet = resultByTraverser asSet.
+	
+]
+
+{ #category : #'examples-start-object' }
+DeepTraverserExamples >> collectionAsStartOnObject [
+	<gtExample>
+	| result1 result2 |
+	
+	result1 := { Object }
+		deep: #subclasses 
+		flatCollect: [ :each | each methods ].
+		
+	result2 := Object
+		deep: #subclasses 
+		flatCollect: [ :each | each methods ].
+	
+	self assert: result1 = result2.
+]
+
+{ #category : #'examples-start-object' }
+DeepTraverserExamples >> collectionAsWithStartOnObject [
+	<gtExample>
+	| result1 result2 |
+	
+	result1 := { Object }
+		withDeep: #subclasses 
+		flatCollect: [ :each | each methods ].
+		
+	result2 := Object
+		withDeep: #subclasses 
+		flatCollect: [ :each | each methods ].
+	
+	self assert: result1 = result2.
+]
+
 { #category : #'examples-relations' }
 DeepTraverserExamples >> collectionRelations: graph [
 	<gtExample>
@@ -190,6 +280,72 @@ DeepTraverserExamples >> deepSelectCollectAs: graph [
 ]
 
 { #category : #utils }
+DeepTraverserExamples >> deepTraverserOnGraph1: graph [
+	<gtExample>
+	<depends: #graph1>
+	^ DeepTraverser new 
+		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
+		on: graph startWith: 0;
+		yourself
+]
+
+{ #category : #utils }
+DeepTraverserExamples >> deepTraverserWithoutActionOnGraph1: graph [
+	<gtExample>
+	<depends: #graph1>
+	^ DeepTraverserWithoutAction new 
+		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
+		on: graph startWith: 0;
+		yourself
+]
+
+{ #category : #utils }
+DeepTraverserExamples >> deepTraverserWithoutEdgesOnGraph1: graph [
+	<gtExample>
+	<depends: #graph1>
+	^ DeepTraverserWithoutEdges new 
+		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
+		on: graph startWith: 0;
+		yourself
+]
+
+{ #category : #'examples-specs' }
+DeepTraverserExamples >> extensionVSFullDeclaration: graph [
+	<gtExample>
+	<depends: #graph1>
+	| result1 result2 result3 result4 |
+	
+	" traverser shortcuts "
+	result1 := $a
+		withDeep: [ :item | self nextElementsFor: item inGraph: graph ]
+		collect: [ :item | item ].
+	
+	" traverser specs "
+	result2 := OrderedCollection new.
+	(DeepTraverser new 
+		onNodeTraverse: [ :item | self nextElementsFor: item inGraph: graph ];
+		onNodeAction: [ :item | result2 add: item ];
+		on: graph startWith: $a;
+		yourself) run.
+	self assert: result1 = result2.
+	
+	" collection interface "
+	result3 := OrderedCollection new.
+	(DeepTraverser new 
+		onNodeTraverse: [ :item | self nextElementsFor: item inGraph: graph ];
+		on: graph startWith: $a;
+		yourself) do: [ :item | result3 add: item ].	
+	self assert: result1 = result3.
+	
+	" streaming interface "
+	result4 := (DeepTraverser new 
+		onNodeTraverse: [ :item | self nextElementsFor: item inGraph: graph ];
+		on: graph startWith: $a;
+		yourself) upToEnd.	
+	self assert: result1 = result4.
+]
+
+{ #category : #utils }
 DeepTraverserExamples >> graph1 [
 	<gtExample>
 	| graph |
@@ -262,8 +418,46 @@ DeepTraverserExamples >> graph5 [
 ]
 
 { #category : #utils }
+DeepTraverserExamples >> graph6 [
+	<gtExample>
+	^ Dictionary new
+		at: 0 put: #( 3 4 );
+		at: 1 put: #( 5 );
+		at: 2 put: #( 6 );
+		at: 3 put: #( 4 7 8 );
+		at: 4 put: #( 9 1 0 );
+		at: 5 put: #( 4 9 10 11 6 2 );
+		at: 6 put: #( 12 13 );
+		at: 7 put: #( );
+		at: 8 put: #( 8 9 7 );
+		at: 9 put: #( 9 );
+		at: 10 put: #( 9 5 0 1 2 );
+		at: 11 put: #( 6 );
+		at: 12 put: #( );
+		at: 13 put: #( );
+		yourself
+]
+
+{ #category : #utils }
 DeepTraverserExamples >> nextElementsFor: each inGraph: graph [
 	^ graph at: each ifAbsent: [ #() ]
+]
+
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> plainTraverser: t1 withActionWithoutEdges: t2 withActionWithEdges: t3 [
+	<gtExample>
+	<depends: #deepTraverserOnGraph1:>
+	<depends: #deepTraverserWithoutActionOnGraph1:>
+	<depends: #deepTraverserWithoutEdgesOnGraph1:>
+	
+	| result1 result2 result3 |
+	result1 := t1 upToEnd.
+	result2 := t2 upToEnd.
+	result3 :=  t3 upToEnd.
+	
+	self assert: result1 = result2.
+	self assert: result2 = result3.
+	self assert: result3 = result1.
 ]
 
 { #category : #'examples-streaming' }
@@ -567,6 +761,32 @@ DeepTraverserExamples >> testTraversedNodesWithStartInGraph4: graph [
 ]
 
 { #category : #'examples-relations' }
+DeepTraverserExamples >> testTraversedNodesWithStartInGraph6: graph [
+	<gtExample>
+	<depends: #graph6>
+	
+	| traverser traversedNodes nodesWithAction edgesWithAction |
+	nodesWithAction := OrderedCollection new.
+	edgesWithAction := OrderedCollection new.
+	
+	traverser := DeepTraverser new 
+		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
+		onNodeAction: [ :node | nodesWithAction add: node ];
+		onEdgeAction: [ :from :to | edgesWithAction add: (from -> to) ];
+		on: graph startWithAll: #( 0 1 2 );
+		yourself.
+	
+	traversedNodes := traverser upToEnd.
+	
+	self assert: traversedNodes = nodesWithAction.
+	self assert: traversedNodes = { 0. 1. 2. 3. 4. 5. 6. 7. 8. 9. 10. 11. 12. 13. } asOrderedCollection.
+	
+	self assert: edgesWithAction = { 0->3. 0->4. 3->4. 4->1. 4->0. 1->5. 5->4. 5->2. 2->6. 5->6. 3->7. 3->8. 8->8. 8->7. 4->9. 5->9. 8->9. 9->9. 5->10. 10->9. 10->5. 10->0. 10->1. 10->2. 5->11. 11->6. 6->12. 6->13 } asOrderedCollection.
+	^ traverser
+	
+]
+
+{ #category : #'examples-relations' }
 DeepTraverserExamples >> testTraversedNodesWithoutAllInGraph4: graph [
 	<gtExample>
 	<description: 'no matter how many (starting) nodes are excluded from the action, the traversal remains the same'>
@@ -623,6 +843,90 @@ DeepTraverserExamples >> testTraversedNodesWithoutStartInGraph4: graph [
 	self assert: traversedNodes = #( 0 1 2 3 4 5 6 7 8 9 10 ) asOrderedCollection.
 	
 	^ traversedNodes
+]
+
+{ #category : #'examples-start-object' }
+DeepTraverserExamples >> variationsOfDeepCollect [
+	<gtExample>
+	| result1 result2 result3 |
+	
+	result1 := { Collection } deepCollect: #subclasses as: Set.	
+	result2 := Collection deepCollect: #subclasses as: Set.
+	result3 := Collection allSubclasses asSet.
+	
+	self assert: result1 = result2.
+	self assert: result2 = result3.
+	self assert: result3 = result1.
+]
+
+{ #category : #'examples-start-object' }
+DeepTraverserExamples >> variationsOfDeepCollectOfMultipleClasses [
+	<gtExample>
+	| result1 result2 result3 result4 |
+	
+	result1 := { Collection . Exception } deepCollect: #subclasses as: Set.	
+	result2 := (Collection deepCollect: #subclasses as: Set) , (Exception deepCollect: #subclasses as: Set).
+	result3 := ({ Collection } deepCollect: #subclasses as: Set) , ({ Exception } deepCollect: #subclasses as: Set).
+	result4 := (Collection allSubclasses , Exception allSubclasses) asSet.
+	
+	self assert: result1 = result2.
+	self assert: result2 = result3.
+	self assert: result3 = result4.
+	self assert: result4 = result1.
+]
+
+{ #category : #'examples-start-object' }
+DeepTraverserExamples >> variationsOfWithDeepCollect [
+	<gtExample>
+	| result1 result2 result3 |
+	
+	result1 := { Collection } withDeepCollect: #subclasses as: Set.	
+	result2 := Collection withDeepCollect: #subclasses as: Set.
+	result3 := Collection withAllSubclasses asSet.
+	
+	self assert: result1 = result2.
+	self assert: result2 = result3.
+	self assert: result3 = result1.
+]
+
+{ #category : #'examples-start-object' }
+DeepTraverserExamples >> variationsOfWithDeepCollectOfMultipleClasses [
+	<gtExample>
+	| result1 result2 result3 result4 |
+	
+	result1 := { Collection . Exception } withDeepCollect: #subclasses as: Set.	
+	result2 := (Collection withDeepCollect: #subclasses as: Set) , (Exception withDeepCollect: #subclasses as: Set).
+	result3 := ({ Collection } withDeepCollect: #subclasses as: Set) , ({ Exception } withDeepCollect: #subclasses as: Set).
+	result4 := (Collection withAllSubclasses , Exception withAllSubclasses) asSet.
+	
+	self assert: result1 = result2.
+	self assert: result2 = result3.
+	self assert: result3 = result4.
+	self assert: result4 = result1.
+]
+
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> withAllSubclassesNumber [
+	<gtExample>
+	| resultByRaw resultByTraverser |
+	resultByRaw := Number withAllSubclasses.
+	resultByTraverser := Number withDeepCollect: #subclasses.
+	
+	self assert: resultByRaw size = resultByTraverser size.
+	self assert: resultByRaw asSet = resultByTraverser asSet.
+	
+]
+
+{ #category : #'examples-difference' }
+DeepTraverserExamples >> withAllSubclassesObject [
+	<gtExample>
+	| resultByRaw resultByTraverser |
+	resultByRaw := Object withAllSubclasses.
+	resultByTraverser := Object withDeepCollect: #subclasses.
+	
+	self assert: resultByRaw size = resultByTraverser size.
+	self assert: resultByRaw asSet = resultByTraverser asSet.
+	
 ]
 
 { #category : #'examples-extensions' }
@@ -755,4 +1059,27 @@ DeepTraverserExamples >> withDeepSelectCollectAs: graph [
 		collect: [ :each | each ]
 		as: Set.
 	self assert: result = #( 1 3 ) asSet
+]
+
+{ #category : #'examples-specs' }
+DeepTraverserExamples >> withVSwithout [
+	<gtExample>
+	| result1 result2 diff21 diff12 |
+	
+	result1 := { Object }
+		deep: #subclasses 
+		flatCollect: [ :each | each methods ].
+		
+	result2 := Object
+		withDeep: #subclasses 
+		flatCollect: [ :each | each methods ].
+	
+	self assert: result1 ~= result2.
+	self assert: result1 asSet ~= result2 asSet.
+	
+	self assert: (diff21 := result2 asSet difference: result1 asSet) notEmpty.
+	self assert: (diff12 := result1 asSet difference: result2 asSet) isEmpty.
+	
+	self assert: (diff21 allSatisfy: [ :cm | cm methodClass = Object ]).
+	self assert: diff21 asSet = Object methods asSet
 ]

@@ -57,6 +57,14 @@ DeepTraverserWithoutEdges >> on: anObject1 startWith: anObject2 [
 ]
 
 { #category : #configuring }
+DeepTraverserWithoutEdges >> on: anObject startWithAll: aCollection [
+	super on: anObject startWithAll: aCollection.
+	
+	onPickNextAction := [ current := objectsToTraverse removeFirst ].
+	isActionAppliedOnCurrent := true
+]
+
+{ #category : #configuring }
 DeepTraverserWithoutEdges >> on: anObject1 startWithout: anObject2 [
 	super on: anObject1 startWithout: anObject2.
 

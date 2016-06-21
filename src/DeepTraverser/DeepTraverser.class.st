@@ -32,6 +32,13 @@ DeepTraverser >> on: anObject1 startWith: anObject2 [
 ]
 
 { #category : #configuring }
+DeepTraverser >> on: anObject startWithAll: aCollection [
+	super on: anObject startWithAll: aCollection.
+
+	edgesToAction := IdentityDictionary new: self expectedSize. " track edges until they are allowed to be consumed "
+]
+
+{ #category : #configuring }
 DeepTraverser >> on: anObject1 startWithout: anObject2 [
 	super on: anObject1 startWithout: anObject2.
 

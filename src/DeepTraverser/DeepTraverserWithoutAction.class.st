@@ -130,6 +130,20 @@ DeepTraverserWithoutAction >> on: anObject1 startWith: anObject2 [
 ]
 
 { #category : #configuring }
+DeepTraverserWithoutAction >> on: anObect startWithAll: aCollection [
+	" traverse anObject. start traversal using aCollection but do not apply action on items of aCollection "
+	initializer := [ self on: anObect startWithAll: aCollection ].
+	
+	" reset everything "
+	object := anObect.
+	startObject := aCollection asOrderedCollection.
+	current := nil.
+	previous := nil.
+	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
+]
+
+{ #category : #configuring }
 DeepTraverserWithoutAction >> on: anObject1 startWithout: anObject2 [
 	" traverse anObject1. start traversal using anObject2 but do not apply action on anObject2 "
 	initializer := [ self on: anObject1 startWithout: anObject2 ].
