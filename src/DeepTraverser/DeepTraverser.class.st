@@ -16,11 +16,11 @@ DeepTraverser >> doNodeAction [
 	isActionAppliedOnCurrent ifFalse: [ ^ self ].
 	
 	" handle the action for the current node "
-	onNodeAction action: current using: self.
+	onNodeAction dtAction: current using: self.
 	
 	" handle the actions of postponed edge actions related to the current node "
 	(edgesToAction removeKey: current ifAbsent: [ #() ]) do: [ :assoc |
-		onEdgeAction from: assoc key to: assoc value using: self ]
+		onEdgeAction dtActionfrom: assoc key to: assoc value using: self ]
 	
 ]
 

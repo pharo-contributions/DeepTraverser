@@ -55,7 +55,7 @@ DeepTraverserWithoutAction >> doNodeTraverse [
 	" the current traversal phase "
 	
 	" always traverse a scheduled node "
-	onNodeTraverse traverse: current using: self.	
+	onNodeTraverse dtTraverse: current using: self.	
 
 ]
 

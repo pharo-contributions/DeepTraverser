@@ -29,7 +29,7 @@ DeepTraverserWithoutEdges >> doNodeAction [
 	isActionAppliedOnCurrent ifFalse: [ ^ self ].
 	
 	" handle the action for the current node "
-	onNodeAction action: current using: self.
+	onNodeAction dtAction: current using: self.
 ]
 
 { #category : #streaming }

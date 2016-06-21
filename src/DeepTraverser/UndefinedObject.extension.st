@@ -1,18 +1,18 @@
 Extension { #name : #UndefinedObject }
 
 { #category : #'*DeepTraverser-private' }
-UndefinedObject >> action: anObject using: aStream [
+UndefinedObject >> dtAction: anObject using: aStream [
+]
+
+{ #category : #'*DeepTraverser-private' }
+UndefinedObject >> dtActionfrom: fromObject to: toObject using: aStream [
+]
+
+{ #category : #'*DeepTraverser-private' }
+UndefinedObject >> dtTraverse: anObject using: aStream [
+	
 ]
 
 { #category : #'*DeepTraverser-private' }
 UndefinedObject >> dtTraverseUsing: aStream [
-]
-
-{ #category : #'*DeepTraverser-private' }
-UndefinedObject >> from: fromObject to: toObject using: aStream [
-]
-
-{ #category : #'*DeepTraverser-private' }
-UndefinedObject >> traverse: anObject using: aStream [
-	
 ]
