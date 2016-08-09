@@ -194,8 +194,12 @@ Object >> deepCollectAsSet: aBlock [
 ]
 
 { #category : #'*DeepTraverser-private' }
+Object >> dtTraverseStartUsing: aStream [
+	aStream traverseStart: self
+]
+
+{ #category : #'*DeepTraverser-private' }
 Object >> dtTraverseUsing: aStream [
-	<todo: 'refactor / remove from Object'>
 	aStream traverse: self
 ]
 

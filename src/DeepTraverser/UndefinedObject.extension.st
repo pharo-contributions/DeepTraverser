@@ -14,5 +14,9 @@ UndefinedObject >> dtTraverse: anObject using: aStream [
 ]
 
 { #category : #'*DeepTraverser-private' }
+UndefinedObject >> dtTraverseStartUsing: aStream [
+]
+
+{ #category : #'*DeepTraverser-private' }
 UndefinedObject >> dtTraverseUsing: aStream [
 ]

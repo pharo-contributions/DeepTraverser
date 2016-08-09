@@ -145,8 +145,9 @@ DeepTraverserWithoutAction >> on: anObject1 startWith: anObject2 [
 	startObject := anObject2.
 	current := nil.
 	previous := nil.
-	objectsToTraverse := OrderedCollection with: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
+	objectsToTraverse := OrderedCollection new. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize. " traversal phase 1 check / quick check, slow add"
+	startObject dtTraverseStartUsing: self.
 ]
 
 { #category : #configuring }
@@ -159,8 +160,9 @@ DeepTraverserWithoutAction >> on: anObect startWithAll: aCollection [
 	startObject := aCollection asOrderedCollection.
 	current := nil.
 	previous := nil.
-	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
+	objectsToTraverse := OrderedCollection new: aCollection size. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize. " traversal phase 1 check / quick check, slow add"
+	startObject dtTraverseStartUsing: self.
 ]
 
 { #category : #configuring }
@@ -173,8 +175,9 @@ DeepTraverserWithoutAction >> on: anObject1 startWithout: anObject2 [
 	startObject := anObject2.
 	current := nil.
 	previous := nil.
-	objectsToTraverse := OrderedCollection with: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
+	objectsToTraverse := OrderedCollection new. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize. " traversal phase 1 check / quick check, slow add"
+	startObject dtTraverseStartUsing: self.
 ]
 
 { #category : #configuring }
@@ -187,8 +190,9 @@ DeepTraverserWithoutAction >> on: anObect startWithoutAll: aCollection [
 	startObject := aCollection asOrderedCollection.
 	current := nil.
 	previous := nil.
-	objectsToTraverse := OrderedCollection withAll: startObject. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
-	objectsTraversed := IdentitySet new: self expectedSize " traversal phase 1 check / quick check, slow add"
+	objectsToTraverse := OrderedCollection new: aCollection size. " traversal  phase 2 check / slow check [reversed for better speed ], quick add "
+	objectsTraversed := IdentitySet new: self expectedSize. " traversal phase 1 check / quick check, slow add"
+	startObject dtTraverseStartUsing: self.
 ]
 
 { #category : #accessing }
@@ -258,6 +262,11 @@ DeepTraverserWithoutAction >> traverse: anObject [
 
 	" add this new node for the next traversal "
 	objectsToTraverse add: anObject.
+]
+
+{ #category : #private }
+DeepTraverserWithoutAction >> traverseStart: anObject [
+	objectsToTraverse add: anObject
 ]
 
 { #category : #deprecated }
