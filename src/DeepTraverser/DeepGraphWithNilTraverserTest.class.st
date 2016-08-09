@@ -45,6 +45,6 @@ DeepGraphWithNilTraverserTest >> testGraphStartingWithZero [
 		on: graph startWith: 0;
 		run.
 	
-	self assert: nodes = { 1 . 2 } asOrderedCollection.
+	self assert: nodes = { 0 . 1 } asOrderedCollection.
 	self assert: edges = { 0->1 } asOrderedCollection
 ]
