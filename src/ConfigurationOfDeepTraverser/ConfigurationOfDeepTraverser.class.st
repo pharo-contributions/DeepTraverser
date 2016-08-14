@@ -67,6 +67,8 @@ ConfigurationOfDeepTraverser >> development: spec [
 
 	spec for: #'common' version: '1.0-baseline'.
 
+	spec for: #'pharo5.x' version: #'stable'.
+
 ]
 
 { #category : #accessing }
@@ -86,8 +88,12 @@ ConfigurationOfDeepTraverser >> stable: spec [
 	<symbolicVersion: #'stable'>
 
 	spec for: #'common' version: '1.2'.
+
 	spec for: #'pharo3.x' version: '1.0'.
+
 	spec for: #'pharo4.x' version: '1.2'.
+
+	spec for: #'pharo5.x' version: '2.0'.
 
 ]
 
@@ -127,5 +133,18 @@ ConfigurationOfDeepTraverser >> version12: spec [
 		spec author: 'TudorGirba'.
 		spec timestamp: '7/8/2015 07:45'.
 		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.10'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfDeepTraverser >> version20: spec [
+	<version: '2.0' imports: #('1.0-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'Moose 6.0 release'.
+		spec author: 'TudorGirba'.
+		spec timestamp: '8/14/2016 20:44'.
+		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.36'. ].
 
 ]
