@@ -4,16 +4,6 @@ Class {
 	#category : #'DeepTraverser-Examples'
 }
 
-{ #category : #'*DeepTraverser-Examples' }
-DeepTraverserExamples class >> gtExamplesProvider [
-	^ DeepTraverserExamples new 
-]
-
-{ #category : #'*DeepTraverser-Examples' }
-DeepTraverserExamples class >> gtExamplesSource [
-	^ DeepTraverser
-]
-
 { #category : #'examples-difference' }
 DeepTraverserExamples >> allMethodsArray [
 	<gtExample>
