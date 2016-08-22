@@ -79,6 +79,15 @@ DeepTraverserWithoutAction >> expectedSize: anNumber [
 	expectedSize := expectedSize
 ]
 
+{ #category : #'*DeepTraverser-UI' }
+DeepTraverserWithoutAction >> gtInspectorObjectsTraversedIn: composite [
+	<gtInspectorPresentationOrder: 40>
+	composite list
+		title: 'Traversed';
+		display: [ self objectsTraversed ];
+		format: [ :each | each gtDisplayString ]
+]
+
 { #category : #testing }
 DeepTraverserWithoutAction >> hasNext [
 	^ objectsToTraverse isEmptyOrNil not

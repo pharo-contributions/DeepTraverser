@@ -273,6 +273,7 @@ DeepTraverserExamples >> deepSelectCollectAs: graph [
 DeepTraverserExamples >> deepTraverserOnGraph1: graph [
 	<gtExample>
 	<depends: #graph1>
+	<subjectClass: #DeepTraverser>
 	^ DeepTraverser new 
 		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
 		on: graph startWith: 0;
@@ -283,6 +284,8 @@ DeepTraverserExamples >> deepTraverserOnGraph1: graph [
 DeepTraverserExamples >> deepTraverserWithoutActionOnGraph1: graph [
 	<gtExample>
 	<depends: #graph1>
+	<subjectClass: #DeepTraverserWithoutAction>
+
 	^ DeepTraverserWithoutAction new 
 		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
 		on: graph startWith: 0;
@@ -293,6 +296,8 @@ DeepTraverserExamples >> deepTraverserWithoutActionOnGraph1: graph [
 DeepTraverserExamples >> deepTraverserWithoutEdgesOnGraph1: graph [
 	<gtExample>
 	<depends: #graph1>
+	<subjectClass: #DeepTraverserWithoutEdges>
+	
 	^ DeepTraverserWithoutEdges new 
 		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
 		on: graph startWith: 0;
@@ -439,7 +444,8 @@ DeepTraverserExamples >> plainTraverser: t1 withActionWithoutEdges: t2 withActio
 	<depends: #deepTraverserOnGraph1:>
 	<depends: #deepTraverserWithoutActionOnGraph1:>
 	<depends: #deepTraverserWithoutEdgesOnGraph1:>
-	
+	<subjectClass: #DeepTraverserWithoutAction selector: #upToEnd>
+
 	| result1 result2 result3 |
 	result1 := t1 upToEnd.
 	result2 := t2 upToEnd.
@@ -448,6 +454,8 @@ DeepTraverserExamples >> plainTraverser: t1 withActionWithoutEdges: t2 withActio
 	self assert: result1 = result2.
 	self assert: result2 = result3.
 	self assert: result3 = result1.
+	
+	^ { t1 . t2 . t3 }
 ]
 
 { #category : #'examples-streaming' }
