@@ -97,7 +97,7 @@ DeepTraverserExamples >> collectionAsWithStartOnObject [
 { #category : #'examples-relations' }
 DeepTraverserExamples >> collectionRelations: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	| relations |
 	relations := OrderedCollection new.
 	
@@ -116,7 +116,7 @@ DeepTraverserExamples >> collectionRelations: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepCollect: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -128,7 +128,7 @@ DeepTraverserExamples >> deepCollect: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepCollectAs: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -141,7 +141,7 @@ DeepTraverserExamples >> deepCollectAs: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepCollectAsSet: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -152,7 +152,7 @@ DeepTraverserExamples >> deepCollectAsSet: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepCollectSimple: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -163,7 +163,7 @@ DeepTraverserExamples >> deepCollectSimple: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| trace |
 	trace := OrderedCollection new.
@@ -176,7 +176,7 @@ DeepTraverserExamples >> deepDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepDoRelationDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| trace relationTrace |
 	trace := OrderedCollection new.
@@ -193,7 +193,7 @@ DeepTraverserExamples >> deepDoRelationDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepEdgesDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| trace |
 	trace := OrderedCollection new.
@@ -206,7 +206,7 @@ DeepTraverserExamples >> deepEdgesDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepFlatCollect: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -218,7 +218,7 @@ DeepTraverserExamples >> deepFlatCollect: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepFlatCollectAs: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -232,7 +232,7 @@ DeepTraverserExamples >> deepFlatCollectAs: graph [
 DeepTraverserExamples >> deepRelationDo: graph [
 	<todo: 'is this really what we want ?'>
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| relationTrace |
 	relationTrace := OrderedCollection new.
@@ -246,7 +246,7 @@ DeepTraverserExamples >> deepRelationDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepSelect: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -258,7 +258,7 @@ DeepTraverserExamples >> deepSelect: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> deepSelectCollectAs: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -272,7 +272,7 @@ DeepTraverserExamples >> deepSelectCollectAs: graph [
 { #category : #utils }
 DeepTraverserExamples >> deepTraverserOnGraph1: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	<subjectClass: #DeepTraverser>
 	^ DeepTraverser new 
 		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
@@ -283,7 +283,7 @@ DeepTraverserExamples >> deepTraverserOnGraph1: graph [
 { #category : #utils }
 DeepTraverserExamples >> deepTraverserWithoutActionOnGraph1: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	<subjectClass: #DeepTraverserWithoutAction>
 
 	^ DeepTraverserWithoutAction new 
@@ -295,7 +295,7 @@ DeepTraverserExamples >> deepTraverserWithoutActionOnGraph1: graph [
 { #category : #utils }
 DeepTraverserExamples >> deepTraverserWithoutEdgesOnGraph1: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	<subjectClass: #DeepTraverserWithoutEdges>
 	
 	^ DeepTraverserWithoutEdges new 
@@ -307,7 +307,7 @@ DeepTraverserExamples >> deepTraverserWithoutEdgesOnGraph1: graph [
 { #category : #'examples-specs' }
 DeepTraverserExamples >> extensionVSFullDeclaration: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	| result1 result2 result3 result4 |
 	
 	" traverser shortcuts "
@@ -441,9 +441,9 @@ DeepTraverserExamples >> nextElementsFor: each inGraph: graph [
 { #category : #'examples-difference' }
 DeepTraverserExamples >> plainTraverser: t1 withActionWithoutEdges: t2 withActionWithEdges: t3 [
 	<gtExample>
-	<depends: #deepTraverserOnGraph1:>
-	<depends: #deepTraverserWithoutActionOnGraph1:>
-	<depends: #deepTraverserWithoutEdgesOnGraph1:>
+	<dependsOn: #deepTraverserOnGraph1:>
+	<dependsOn: #deepTraverserWithoutActionOnGraph1:>
+	<dependsOn: #deepTraverserWithoutEdgesOnGraph1:>
 	<subjectClass: #DeepTraverserWithoutAction selector: #upToEnd>
 
 	| result1 result2 result3 |
@@ -461,7 +461,7 @@ DeepTraverserExamples >> plainTraverser: t1 withActionWithoutEdges: t2 withActio
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingAtEnd: traverser [
 	<gtExample>
-	<depends: #streamingNext:>
+	<dependsOn: #streamingNext:>
 	<raises: #CollectionIsEmpty>
 	
 	self assert: traverser hasNext not.
@@ -475,7 +475,7 @@ DeepTraverserExamples >> streamingAtEnd: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingNext: traverser [
 	<gtExample>
-	<depends: #streamingTraverser:>
+	<dependsOn: #streamingTraverser:>
 	
 	self assert: traverser hasNext.
 	self assert: traverser current isNil.
@@ -509,7 +509,7 @@ DeepTraverserExamples >> streamingNext: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingNextElements: traverser [
 	<gtExample>
-	<depends: #streamingTraverser:>
+	<dependsOn: #streamingTraverser:>
 	
 	self assert: traverser hasNext.
 	self assert: traverser current isNil.
@@ -540,7 +540,7 @@ DeepTraverserExamples >> streamingNextElements: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingRestart: traverser [
 	<gtExample>
-	<depends: #streamingNext:>
+	<dependsOn: #streamingNext:>
 	
 	traverser reset.
 	
@@ -554,7 +554,7 @@ DeepTraverserExamples >> streamingRestart: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingTraverser: graph [
 	<gtExample>
-	<depends: #graph5>
+	<dependsOn: #graph5>
 	^ DeepTraverserWithoutAction new 
 		on: graph startWith: $a;
 		onNodeTraverse: [ :each | self nextElementsFor: each inGraph: graph ];
@@ -564,7 +564,7 @@ DeepTraverserExamples >> streamingTraverser: graph [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingUpToAnyExistingElement: traverser [
 	<gtExample>
-	<depends: #streamingUpToExistingElement:>
+	<dependsOn: #streamingUpToExistingElement:>
 	
 	| result |
 
@@ -584,7 +584,7 @@ DeepTraverserExamples >> streamingUpToAnyExistingElement: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingUpToAnyMatching: traverser [
 	<gtExample>
-	<depends: #streamingTraverser:>
+	<dependsOn: #streamingTraverser:>
 	
 	| result |
 	result := traverser upToAnyMatching: [ :node | node = $c ].
@@ -600,7 +600,7 @@ DeepTraverserExamples >> streamingUpToAnyMatching: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingUpToEnd: traverser [
 	<gtExample>
-	<depends: #streamingTraverser:>
+	<dependsOn: #streamingTraverser:>
 	
 	| result |
 	result := traverser upToEnd.
@@ -613,7 +613,7 @@ DeepTraverserExamples >> streamingUpToEnd: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingUpToExistingElement: traverser [
 	<gtExample>
-	<depends: #streamingTraverser:>
+	<dependsOn: #streamingTraverser:>
 	
 	| result |
 	self assert: (traverser next: 2) = { $a. $b }.
@@ -628,7 +628,7 @@ DeepTraverserExamples >> streamingUpToExistingElement: traverser [
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingUpToNonExistingElement: traverser [
 	<gtExample>
-	<depends: #streamingUpToExistingElement:>
+	<dependsOn: #streamingUpToExistingElement:>
 	
 	| result |
 
@@ -680,7 +680,7 @@ DeepTraverserExamples >> superclassOfSmallInteger [
 { #category : #'examples-relations' }
 DeepTraverserExamples >> testCyclesAndEdgesInGraph2: graph [
 	<gtExample>
-	<depends: #graph2>
+	<dependsOn: #graph2>
 	| nodes edges traverser |
 
 	nodes := OrderedCollection new.
@@ -702,7 +702,7 @@ DeepTraverserExamples >> testCyclesAndEdgesInGraph2: graph [
 { #category : #'examples-relations' }
 DeepTraverserExamples >> testCyclesAndEdgesInGraph3: graph [
 	<gtExample>
-	<depends: #graph3>
+	<dependsOn: #graph3>
 	| nodes edges traverser |
 
 	nodes := OrderedCollection new.
@@ -725,8 +725,8 @@ DeepTraverserExamples >> testCyclesAndEdgesInGraph3: graph [
 DeepTraverserExamples >> testTraversedNodesInGraph4WithStart: resultWithStart withoutStart: resultWithoutStart [
 	<gtExample>
 	<description: 'withStart / withoutStart only specifies whether to apply the action on the start node or not - has no influence on the traversal itself'>
-	<depends: #testTraversedNodesWithStartInGraph4:>
-	<depends: #testTraversedNodesWithoutStartInGraph4:>
+	<dependsOn: #testTraversedNodesWithStartInGraph4:>
+	<dependsOn: #testTraversedNodesWithoutStartInGraph4:>
 	
 	self assert: resultWithStart = resultWithoutStart
 ]
@@ -735,8 +735,8 @@ DeepTraverserExamples >> testTraversedNodesInGraph4WithStart: resultWithStart wi
 DeepTraverserExamples >> testTraversedNodesInGraph4WithoutStartAction: resultWithStartAction withoutStart: resultWithoutStart [
 	<gtExample>
 	<description: 'withStart / withoutStart only specifies whether to apply the action on the start node or not - has no influence on the traversal itself'>
-	<depends: #testTraversedNodesWithoutStartActionInGraph4:>
-	<depends: #testTraversedNodesWithoutStartInGraph4:>
+	<dependsOn: #testTraversedNodesWithoutStartActionInGraph4:>
+	<dependsOn: #testTraversedNodesWithoutStartInGraph4:>
 	
 	self assert: resultWithStartAction = resultWithoutStart
 ]
@@ -744,7 +744,7 @@ DeepTraverserExamples >> testTraversedNodesInGraph4WithoutStartAction: resultWit
 { #category : #'examples-relations' }
 DeepTraverserExamples >> testTraversedNodesWithStartInGraph4: graph [
 	<gtExample>
-	<depends: #graph4>
+	<dependsOn: #graph4>
 	
 	| traverser traversedNodes |
 	traverser := DeepTraverserWithoutAction new 
@@ -761,7 +761,7 @@ DeepTraverserExamples >> testTraversedNodesWithStartInGraph4: graph [
 { #category : #'examples-relations' }
 DeepTraverserExamples >> testTraversedNodesWithStartInGraph6: graph [
 	<gtExample>
-	<depends: #graph6>
+	<dependsOn: #graph6>
 	
 	| traverser traversedNodes nodesWithAction edgesWithAction |
 	nodesWithAction := OrderedCollection new.
@@ -788,7 +788,7 @@ DeepTraverserExamples >> testTraversedNodesWithStartInGraph6: graph [
 DeepTraverserExamples >> testTraversedNodesWithoutAllInGraph4: graph [
 	<gtExample>
 	<description: 'no matter how many (starting) nodes are excluded from the action, the traversal remains the same'>
-	<depends: #graph4>
+	<dependsOn: #graph4>
 	
 	| traverser traversedNodes nodesWithAction |
 	nodesWithAction := OrderedCollection new.
@@ -807,7 +807,7 @@ DeepTraverserExamples >> testTraversedNodesWithoutAllInGraph4: graph [
 { #category : #'examples-relations' }
 DeepTraverserExamples >> testTraversedNodesWithoutStartActionInGraph4: graph [
 	<gtExample>
-	<depends: #graph4>
+	<dependsOn: #graph4>
 	
 	| nodesByAction traverser traversedNodes |
 	
@@ -829,7 +829,7 @@ DeepTraverserExamples >> testTraversedNodesWithoutStartActionInGraph4: graph [
 { #category : #'examples-relations' }
 DeepTraverserExamples >> testTraversedNodesWithoutStartInGraph4: graph [
 	<gtExample>
-	<depends: #graph4>
+	<dependsOn: #graph4>
 	
 	| traverser traversedNodes |
 	traverser := DeepTraverserWithoutAction new 
@@ -930,7 +930,7 @@ DeepTraverserExamples >> withAllSubclassesObject [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepCollect: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -941,7 +941,7 @@ DeepTraverserExamples >> withDeepCollect: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepCollectAs: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -953,7 +953,7 @@ DeepTraverserExamples >> withDeepCollectAs: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| trace |
 	trace := OrderedCollection new.
@@ -966,7 +966,7 @@ DeepTraverserExamples >> withDeepDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepDoRelationDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| trace relationTrace |
 	trace := OrderedCollection new.
@@ -983,7 +983,7 @@ DeepTraverserExamples >> withDeepDoRelationDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepEdgesDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| trace |
 	trace := OrderedCollection new.
@@ -996,7 +996,7 @@ DeepTraverserExamples >> withDeepEdgesDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepFlatCollect: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -1008,7 +1008,7 @@ DeepTraverserExamples >> withDeepFlatCollect: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepFlatCollectAs: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -1021,7 +1021,7 @@ DeepTraverserExamples >> withDeepFlatCollectAs: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepRelationDo: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| relationTrace |
 	relationTrace := OrderedCollection new.
@@ -1035,7 +1035,7 @@ DeepTraverserExamples >> withDeepRelationDo: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepSelectCollect: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
@@ -1048,7 +1048,7 @@ DeepTraverserExamples >> withDeepSelectCollect: graph [
 { #category : #'examples-extensions' }
 DeepTraverserExamples >> withDeepSelectCollectAs: graph [
 	<gtExample>
-	<depends: #graph1>
+	<dependsOn: #graph1>
 	
 	| result |
 	result := 1 
