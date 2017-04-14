@@ -115,6 +115,8 @@ ConfigurationOfDeepTraverser >> stable: spec [
 
 	spec for: #'pharo5.x' version: '2.0'.
 
+	spec for: #'pharo6.x' version: '2.0'.
+
 ]
 
 { #category : #versions }
@@ -163,8 +165,8 @@ ConfigurationOfDeepTraverser >> version20: spec [
 	spec for: #'common' do: [
 		spec blessing: #'stable'.
 		spec description: 'Moose 6.0 release'.
-		spec author: 'TudorGirba'.
-		spec timestamp: '8/14/2016 20:44'.
-		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.36'. ].
+		spec author: 'PavelKrivanek'.
+		spec timestamp: '4/14/2017 10:00'.
+		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.39'. ].
 
 ]
