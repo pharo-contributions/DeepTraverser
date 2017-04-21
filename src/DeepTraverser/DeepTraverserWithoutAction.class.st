@@ -15,6 +15,14 @@ Class {
 	#category : #DeepTraverser
 }
 
+{ #category : #'*DeepTraverser-UI' }
+DeepTraverserWithoutAction class >> gtExampleEmpty [
+	<gtExample>
+	<label: 'Empty'>
+	
+	^ self new
+]
+
 { #category : #testing }
 DeepTraverserWithoutAction >> atEnd [
 	^ self hasNext not
