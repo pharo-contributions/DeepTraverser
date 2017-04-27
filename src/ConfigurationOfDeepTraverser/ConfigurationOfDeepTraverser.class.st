@@ -167,6 +167,6 @@ ConfigurationOfDeepTraverser >> version20: spec [
 		spec description: 'Moose 6.0 release'.
 		spec author: 'PavelKrivanek'.
 		spec timestamp: '4/21/2017 10:00'.
-		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.41'. ].
+		spec package: 'DeepTraverser' with: 'DeepTraverser-PavelKrivanek.41'. ].
 
 ]
