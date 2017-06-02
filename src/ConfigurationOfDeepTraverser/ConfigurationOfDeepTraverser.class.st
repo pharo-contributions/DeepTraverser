@@ -62,21 +62,28 @@ ConfigurationOfDeepTraverser >> baseline10: spec [
 ]
 
 { #category : #baselines }
-ConfigurationOfDeepTraverser >> baseline11: spec [ 
+ConfigurationOfDeepTraverser >> baseline11: spec [
 	<version: '1.1-baseline'>
-	
-	spec for: #common do: [
-		spec blessing: #baseline.
-		spec description: 'Added GTExample as a prerequisite'.
+
+	spec for: #'common' do: [
+		spec blessing: #'baseline'.
 		spec repository: 'http://www.smalltalkhub.com/mc/Moose/DeepTraverser/main'.
 		spec project: 'GTExamples' with: [
-			spec
-				className: #ConfigurationOfGTExamples;
-				version: #development;
-				repository: 'http://smalltalkhub.com/mc/Moose/GToolkit/main/' ].
-		spec package: 'DeepTraverser' with: [ spec requires: 'GTExamples' ].
-		spec group: 'Tests' with: #('DeepTraverser'). 
-	]
+				spec
+					className: #ConfigurationOfGTExamples;
+					versionString: #'development';
+					repository: 'http://smalltalkhub.com/mc/Moose/GToolkit/main/' ].
+		spec 
+			package: 'DeepTraverser';
+			package: #'DeepTraverser-Examples' with: [
+				spec requires: #('DeepTraverser' 'GTExamples' ). ];
+			package: #'DeepTraverser-Tests' with: [
+				spec requires: #('DeepTraverser' ). ].
+		spec 
+			group: 'Core' with: #('DeepTraverser' );
+			group: 'Examples' with: #(#'DeepTraverser-Examples' );
+			group: 'Tests' with: #(#'DeepTraverser-Tests' ). ].
+
 ]
 
 { #category : #'symbolic versions' }
