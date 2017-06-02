@@ -72,6 +72,7 @@ ConfigurationOfDeepTraverser >> baseline11: spec [
 				spec
 					className: #ConfigurationOfGTExamples;
 					versionString: #'development';
+					loads: #('Core' );
 					repository: 'http://smalltalkhub.com/mc/Moose/GToolkit/main/' ].
 		spec 
 			package: 'DeepTraverser';
