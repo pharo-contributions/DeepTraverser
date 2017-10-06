@@ -87,15 +87,39 @@ ConfigurationOfDeepTraverser >> baseline11: spec [
 
 ]
 
+{ #category : #baselines }
+ConfigurationOfDeepTraverser >> baseline12: spec [
+	<version: '1.2-baseline'>
+
+	spec for: #'common' do: [
+		spec blessing: #'baseline'.
+		spec repository: 'http://www.smalltalkhub.com/mc/Moose/DeepTraverser/main'.
+		spec baseline: 'GToolkitExamplesEngine' with: [ spec 
+				repository: 'github://feenkcom/gtoolkit-examples/src' ].
+		spec 
+			package: 'DeepTraverser';
+			package: #'DeepTraverser-Examples' with: [
+				spec requires: #('DeepTraverser' 'GToolkitExamplesEngine' ). ];
+			package: #'DeepTraverser-Tests' with: [
+				spec requires: #('DeepTraverser' ). ].
+		spec 
+			group: 'Core' with: #('DeepTraverser' );
+			group: 'Examples' with: #(#'DeepTraverser-Examples' );
+			group: 'Tests' with: #(#'DeepTraverser-Tests' ). ].
+
+]
+
 { #category : #'symbolic versions' }
 ConfigurationOfDeepTraverser >> development: spec [
 	<symbolicVersion: #'development'>
+
+	spec for: #'common' version: '1.2-baseline'.
 
 	spec for: #'pharo4.x' version: '1.2'.
 
 	spec for: #'pharo5.x' version: '2.0'.
 
-	spec for: #'pharo6.x' version: '1.1-baseline'.
+	spec for: #'pharo6.x' version: '1.2-baseline'.
 
 ]
 
