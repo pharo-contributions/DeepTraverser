@@ -433,15 +433,20 @@ DeepTraverserExamples >> plainTraverserAndWithActionWithoutEdgesAndWithActionWit
 { #category : #'examples-streaming' }
 DeepTraverserExamples >> streamingAtEnd [
 	<gtExample>
-	<raises: #CollectionIsEmpty>
+	
 	| traverser |
 	traverser := self streamingNext.	
 	self assert: traverser hasNext not.
 	self assert: traverser current isNil not.
-	self assert: traverser current = $k.
+	self assert: traverser current equals: $k.
 	self assert: traverser atEnd.
 	
-	traverser next " oups "
+	[
+		traverser next. " oups "
+	] on: CollectionIsEmpty do: [ 
+		self assert: true.
+		^ traverser ].
+	self assert: false
 ]
 
 { #category : #'examples-streaming' }
