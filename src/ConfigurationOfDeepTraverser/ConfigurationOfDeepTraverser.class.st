@@ -121,6 +121,8 @@ ConfigurationOfDeepTraverser >> development: spec [
 
 	spec for: #'pharo6.x' version: '1.2-baseline'.
 
+	spec for: #'pharo7.x' version: '1.2-baseline'.
+
 ]
 
 { #category : #accessing }
@@ -147,7 +149,9 @@ ConfigurationOfDeepTraverser >> stable: spec [
 
 	spec for: #'pharo5.x' version: '2.0'.
 
-	spec for: #'pharo6.x' version: '2.0'.
+	spec for: #'pharo6.x' version: '2.1'.
+
+	spec for: #'pharo7.x' version: '2.1'.
 
 ]
 
@@ -200,5 +204,21 @@ ConfigurationOfDeepTraverser >> version20: spec [
 		spec author: 'PavelKrivanek'.
 		spec timestamp: '4/21/2017 10:00'.
 		spec package: 'DeepTraverser' with: 'DeepTraverser-PavelKrivanek.41'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfDeepTraverser >> version21: spec [
+	<version: '2.1' imports: #('1.2-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'Release version with splited packages (Core, Examples, Tests)'.
+		spec author: 'CyrilFerlicot'.
+		spec timestamp: '05/02/2018 11:30'.
+		spec 
+			package: 'DeepTraverser' with: 'DeepTraverser-CyrilFerlicot.42';
+			package: #'DeepTraverser-Examples' with: 'DeepTraverser-Examples-AndreiChis.3';
+			package: #'DeepTraverser-Tests' with: 'DeepTraverser-Tests-CyrilFerlicot.1' ].
 
 ]
