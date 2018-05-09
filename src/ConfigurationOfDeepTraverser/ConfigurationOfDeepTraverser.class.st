@@ -49,6 +49,22 @@ ConfigurationOfDeepTraverser class >> project [
 ]
 
 { #category : #baselines }
+ConfigurationOfDeepTraverser >> baseline101: spec [ 
+	<version: '1.0.1-baseline'>
+	
+	spec for: #common do: [
+		spec blessing: #baseline.
+		spec description: 'Add group Core to first version to get backward compatible versions in Pharo 4'.
+		spec repository: 'http://www.smalltalkhub.com/mc/Moose/DeepTraverser/main'.
+		spec package: 'DeepTraverser'.
+
+		spec 
+			group: 'Core' with: #('DeepTraverser');
+			group: 'Tests' with: #('DeepTraverser'). 
+	]
+]
+
+{ #category : #baselines }
 ConfigurationOfDeepTraverser >> baseline10: spec [ 
 	<version: '1.0-baseline'>
 	
@@ -115,7 +131,7 @@ ConfigurationOfDeepTraverser >> development: spec [
 
 	spec for: #'common' version: '1.2-baseline'.
 
-	spec for: #'pharo4.x' version: '1.2'.
+	spec for: #'pharo4.x' version: '1.3'.
 
 	spec for: #'pharo5.x' version: '2.0'.
 
@@ -145,7 +161,7 @@ ConfigurationOfDeepTraverser >> stable: spec [
 
 	spec for: #'pharo3.x' version: '1.0'.
 
-	spec for: #'pharo4.x' version: '1.2'.
+	spec for: #'pharo4.x' version: '1.3'.
 
 	spec for: #'pharo5.x' version: '2.0'.
 
@@ -190,6 +206,19 @@ ConfigurationOfDeepTraverser >> version12: spec [
 		spec description: 'version 1.2'.
 		spec author: 'TudorGirba'.
 		spec timestamp: '7/8/2015 07:45'.
+		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.10'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfDeepTraverser >> version13: spec [
+	<version: '1.3' imports: #('1.0.1-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 1.3'.
+		spec author: 'CyrilFerlicot'.
+		spec timestamp: '5/9/2018 17:12'.
 		spec package: 'DeepTraverser' with: 'DeepTraverser-StefanReichhart.10'. ].
 
 ]
