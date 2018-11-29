@@ -108,6 +108,7 @@ DeepTreeGraphTraverserTest >> testBreadthFirstGraphIterator [
 { #category : #tests }
 DeepTreeGraphTraverserTest >> testCollectionStart [
 	| stream1 stream2 diff21 diff12 |
+	self timeLimit: 60 seconds.
 	self shouldnt: [ 
 		stream1 := { Object }
 			deep: #subclasses 

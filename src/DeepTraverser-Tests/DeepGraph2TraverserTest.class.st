@@ -4,7 +4,7 @@ Class {
 	#category : #'DeepTraverser-Tests-Transformed-To-Examples'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 DeepGraph2TraverserTest >> setUp [
 	super setUp.
 	
